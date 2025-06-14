@@ -4,9 +4,9 @@ const nextConfig = {
   images: {
     domains: ["localhost"],
   },
-  experimental: {
-    ppr: true, // Enable Partial Prerendering
-  },
+  // experimental: {
+  //   ppr: true, // Enable Partial Prerendering
+  // },
 };
 
 module.exports = nextConfig;

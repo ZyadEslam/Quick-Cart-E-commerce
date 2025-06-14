@@ -19,8 +19,8 @@ export default async function HomePageContent() {
 
       <div className="py-22">
         <h2 className="text-2xl font-medium mb-6">Popular products</h2>
-          {/* <Suspense fallback={<div>Loading products...</div>}> */}
-            <ProductsGroup products={products.slice(0, 10)} />
+        {/* <Suspense fallback={<div>Loading products...</div>}> */}
+        <ProductsGroup products={products.slice(0, 10)} />
         {/* </Suspense> */}
         <div className="w-full text-center">
           <Link

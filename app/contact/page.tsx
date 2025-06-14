@@ -193,4 +193,3 @@ const ContactPage = () => {
 };
 
 export default ContactPage;
-export const experimental_ppr = true;
