@@ -1,0 +1,65 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #374151;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary: #374151;
+  --color-secondary: #e6e9f2;
+  --color-secondaryLight: #f0f0f2;
+  --color-orange: #ea580c;
+
+  --breakpoint-sm: 350px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1280px;
+  --breakpoint-2xl: 1536px;
+
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --font-mono: var(--font-outfit400);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-outfit400);
+  overflow-x: hidden;
+}
+
+::-webkit-scrollbar {
+  display: none;
+}
+
+html {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+@layer utilities {
+  .normal-black {
+    @apply font-medium text-[14px] text-black;
+  }
+  .footer-listed-items {
+    @apply flex flex-col gap-2 text-gray-500;
+  }
+  .underlined-header {
+    @apply mb-6 after:content-[''] after:block after:w-[100px] after:h-[2px] after:bg-orange  after:mt-1 after:mb-2;
+  }
+  .side-nav-link {
+    @apply flex items-center gap-2 px-2 py-4;
+  }
+  .side-nav-link-active {
+    @apply border-r-6 border-orange-500 bg-red-100;
+  }
+  .dashboard-input {
+    @apply w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-transparent focus:border-orange-500;
+  }
+  .upload-area {
+    @apply w-full cursor-pointer border border-gray-300 rounded-md hover:border-orange-500 transition-colors;
+  }
+}
