@@ -2,7 +2,7 @@
 import { assets } from "@/public/assets/assets";
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
-import PrimaryBtn from "./PrimaryBtn";
+import PrimaryBtn from "../PrimaryBtn";
 
 const AdvBar = () => {
   const [isMobile, setIsMobile] = useState(false);

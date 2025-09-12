@@ -1,19 +1,8 @@
-import React from "react";
-import ProductsGroup from "../components/ProductsGroup";
-
-const ShopPage = async () => {
-  const res = await fetch("http://localhost:3000/api/product", {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    next: {
-      revalidate: 60,
-    },
-  });
-  const data = await res.json();
-  const products = data.products;
-
+import { lazy, Suspense } from "react";
+import LoadingSpinner from "../UI/LoadingSpinner";
+const ProductsGroup = lazy(() => import("../components/ProductsGroup"));
+// import { ProductsGroup } from "../components";
+const ShopPage = () => {
   return (
     <div className="md:px-[8.5%] sm:px-[5%]">
       <div className="mb-12">
@@ -21,7 +10,9 @@ const ShopPage = async () => {
           All products
         </h2>
       </div>
-      <ProductsGroup products={products} />
+      <Suspense fallback={<LoadingSpinner />}>
+        <ProductsGroup />
+      </Suspense>
     </div>
   );
 };

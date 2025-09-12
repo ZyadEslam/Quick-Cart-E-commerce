@@ -4,6 +4,7 @@ import { usePathname } from "next/navigation";
 
 const GeneralLayout = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname();
+
   return (
     <>
       <UserNav />

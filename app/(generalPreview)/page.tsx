@@ -1,27 +1,27 @@
-import React from "react";
-// import React, { Suspense } from "react";
+import React, { Suspense, lazy } from "react";
+import Link from "next/link";
 import {
-  AdvSlider,
-  AdvBar,
   FeaturedProductsList,
   SubscriptionOffer,
-  ProductsGroup,
+  AdvSlider,
+  AdvBar,
+  // ProductsGroup,
 } from "../components";
-import Link from "next/link";
-import { getProducts } from "../utils/utilFunctions";
+import LoadingSpinner from "../UI/LoadingSpinner";
 
-export default async function HomePageContent() {
-  const products = await getProducts();
-
+const ProductsGroup = lazy(() => import("../components/ProductsGroup"));
+export default function HomePageContent() {
   return (
     <div className="md:px-[8.5%] sm:px-[5%] py-6">
-      <AdvSlider />
+      <Suspense fallback={<LoadingSpinner />}>
+        <AdvSlider />
+      </Suspense>
 
       <div className="py-22">
         <h2 className="text-2xl font-medium mb-6">Popular products</h2>
-        {/* <Suspense fallback={<div>Loading products...</div>}> */}
-        <ProductsGroup products={products.slice(0, 10)} />
-        {/* </Suspense> */}
+        <Suspense fallback={<LoadingSpinner />}>
+          <ProductsGroup numOfProducts={10} />
+        </Suspense>
         <div className="w-full text-center">
           <Link
             href="/shop"
@@ -36,14 +36,19 @@ export default async function HomePageContent() {
         <h2 className="text-3xl text-center after:mx-auto font-medium underlined-header">
           Featured Products
         </h2>
-        <FeaturedProductsList />
+        <Suspense fallback={<LoadingSpinner />}>
+          <FeaturedProductsList />
+        </Suspense>
       </section>
+      <Suspense fallback={<LoadingSpinner />}>
+        <AdvBar />
+      </Suspense>
 
-      <AdvBar />
-      <SubscriptionOffer />
+      <Suspense fallback={<LoadingSpinner />}>
+        <SubscriptionOffer />
+      </Suspense>
     </div>
   );
 }
-React.memo(AdvSlider);
-React.memo(AdvBar);
-// export const experimental_ppr = true;
+// React.memo(AdvSlider);
+// React.memo(AdvBar);

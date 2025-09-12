@@ -1,29 +1,31 @@
 import React from "react";
 import ProductCard from "./ProductCard";
-import { StaticImageData } from "next/image";
-export interface ProductsGroupProps {
-  _id?: number;
-  name: string;
-  description: string;
-  rating: number;
-  price: string;
-  oldPrice?: string;
-  discount?: string;
-  imgSrc: StaticImageData[];
-}
-const ProductsGroup = ({
-  products,
+import { ProductCardProps } from "../types/types";
+import { api } from "../utils/api";
+
+const ProductsGroup = async ({
+  numOfProducts,
   customClassName,
 }: {
-  products: ProductsGroupProps[];
+  numOfProducts?: number;
   customClassName?: string;
 }) => {
+  const products = await api.getProducts();
+  let filteredProducts: ProductCardProps[] = [];
+  if (numOfProducts) {
+    filteredProducts = products.slice(0, numOfProducts);
+  }
+
   return (
     <section className={`${customClassName}`}>
       <div className="flex flex-wrap md:gap-4 gap-0 justify-between mb-8">
-        {products.map((product) => (
-          <ProductCard key={product._id} product={product} />
-        ))}
+        {!numOfProducts
+          ? products.map((product: ProductCardProps) => (
+              <ProductCard key={product._id} product={product} />
+            ))
+          : filteredProducts.map((product: ProductCardProps) => (
+              <ProductCard key={product._id} product={product} />
+            ))}
       </div>
     </section>
   );

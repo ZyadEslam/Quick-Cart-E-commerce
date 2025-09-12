@@ -4,7 +4,7 @@ import Image from "next/image";
 import { assets } from "@/public/assets/assets";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
-import PrimaryBtn from "./PrimaryBtn";
+import PrimaryBtn from "../PrimaryBtn";
 
 const AdvSlider = ({
   images = [

@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { StaticImageData } from "next/image";
 import React from "react";
 import { assets } from "@/public/assets/assets";
@@ -45,4 +45,4 @@ const FeaturedProductsList = () => {
 };
 
 export default FeaturedProductsList;
-React.memo(FeaturedProductCard)
+React.memo(FeaturedProductCard);

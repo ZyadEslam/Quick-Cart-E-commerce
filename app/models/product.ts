@@ -37,6 +37,11 @@ const productSchema = new mongoose.Schema({
     type: [Buffer],
     required: [true, "Product images are required"],
   },
+  quantityInCart: {
+    type: Number,
+    required: false,
+    default: 0,
+  },
 });
 const Product =
   mongoose.models.Product || mongoose.model("Product", productSchema); // see if the user is already exist & if not create a new one

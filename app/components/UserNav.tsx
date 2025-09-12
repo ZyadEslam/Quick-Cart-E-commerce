@@ -7,10 +7,14 @@ import { useState, useEffect } from "react";
 import { AuthButtons, ToggleMenuBtn } from "./";
 import { signOut, useSession } from "next-auth/react";
 import { usePathname } from "next/navigation";
+import { Heart, ShoppingCart } from "lucide-react";
+import { api } from "../utils/api";
+
 const UserNav = () => {
   const pathname = usePathname();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { data: session } = useSession();
+
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
@@ -24,6 +28,39 @@ const UserNav = () => {
 
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  useEffect(() => {
+
+    const getListsFromUser = async () => {
+      if (localStorage.getItem("wishlist")) {
+        if (
+          session?.user &&
+          JSON.parse(localStorage.getItem("wishlist") as string).length === 0
+        ) {
+          const wishlist = await api.getWishlist(session?.user?.id as string);
+          localStorage.setItem("wishlist", JSON.stringify(wishlist));
+        }
+      } else {
+        localStorage.setItem("wishlist", JSON.stringify([]));
+        console.log("No user authenticated");
+      }
+      if (localStorage.getItem("cart")) {
+        if (
+          session?.user &&
+          JSON.parse(localStorage.getItem("cart") as string).length === 0
+        ) {
+          const cart = await api.getCart(session?.user?.id as string);
+          localStorage.setItem("cart", JSON.stringify(cart));
+        }
+      } else {
+        localStorage.setItem("cart", JSON.stringify([]));
+        console.log("No user authenticated");
+      }
+      
+    };
+    
+    getListsFromUser();
   }, []);
 
   return (
@@ -83,7 +120,7 @@ const UserNav = () => {
                   Sign out
                 </span>
               )}
-              {session?.user?.email === "zyadelbehiry@gmail.com" && (
+              {session?.user.isAdmin && (
                 <Link
                   href="/dashboard"
                   className="border border-gray-200 rounded-full text-[12px] px-4 py-1 hover:bg-gray-50 transition-colors duration-200"
@@ -91,6 +128,14 @@ const UserNav = () => {
                   Seller Dashboard
                 </Link>
               )}
+              <div className="flex lg:gap-2 sm:gap-4">
+                <Link href={"/wishlist"}>
+                  <Heart className="w-5 h-5 text-orange hover:opacity-75" />
+                </Link>
+                <Link href={"/cart"}>
+                  <ShoppingCart className="w-5 h-5 text-orange hover:opacity-75" />
+                </Link>
+              </div>
             </ul>
           </div>
 
@@ -109,4 +154,4 @@ const UserNav = () => {
 };
 
 export default UserNav;
-React.memo(AuthButtons)
+React.memo(AuthButtons);
