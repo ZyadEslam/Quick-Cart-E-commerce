@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import { Outfit } from "next/font/google";
 import "./style/globals.css";
-import GeneralLayout from "./(generalPreview)/layout";
 import Provider from "./components/Provider";
-import { getServerSession } from "next-auth";
+import { getServerSession } from "next-auth/next";
 import { authOptions } from "./api/auth/[...nextauth]/auth";
+import StoreProvider from "./components/StoreProvider";
+import { Footer, UserNav } from "./components";
 
 const outfit = Outfit({
   variable: "--font-outfit400",
@@ -26,12 +27,22 @@ export default async function RootLayout({
 
   return (
     <html lang="en">
+      <head>
+        <link
+          href="https://cdn.boxicons.com/fonts/basic/boxicons.min.css"
+          rel="stylesheet"
+        />
+      </head>
       <body
         className={`${outfit.variable} antialiased`}
         suppressHydrationWarning
       >
         <Provider session={session}>
-          <GeneralLayout>{children}</GeneralLayout>
+          <StoreProvider>
+            <UserNav />
+            <main>{children}</main>
+            <Footer />
+          </StoreProvider>
         </Provider>
       </body>
     </html>

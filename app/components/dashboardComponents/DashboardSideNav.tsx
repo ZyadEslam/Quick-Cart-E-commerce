@@ -13,7 +13,7 @@ const sideNavLinks = [
   {
     href: "/dashboard/product-list",
     icon: assets.product_list_icon,
-    label: "Product List",
+    label: "Products List",
   },
   {
     href: "/dashboard/orders",

@@ -62,4 +62,26 @@ html {
   .upload-area {
     @apply w-full cursor-pointer border border-gray-300 rounded-md hover:border-orange-500 transition-colors;
   }
+  .toast {
+    @apply fixed bottom-5 right-5 w-50 py-8 text-center z-500 rounded text-white;
+  }
+  .table-row {
+    @apply w-full mb-10 md:mb-4 grid gap-2 md:gap-0 md:grid-cols-[50%_25%_25%] items-center;
+  }
+  .order-summary-pair {
+    @apply flex flex-col gap-2;
+  }
+  .order-summary-pair input,
+  .order-summary-pair select {
+    @apply bg-white border-2 border-gray-100 p-2;
+  }
+  hr {
+    @apply text-gray-300;
+  }
+  .address-form-label {
+    @apply block text-sm font-medium text-gray-700 mb-1;
+  }
+  .address-form-input {
+    @apply w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange focus:border-transparent;
+  }
 }

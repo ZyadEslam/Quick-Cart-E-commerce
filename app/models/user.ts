@@ -15,9 +15,19 @@ const userSchema = new mongoose.Schema({
   },
   cart: [
     {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Product",
-      default: [],
+      _id: String,
+      name: String,
+      description: String,
+      rating: Number,
+      price: Number,
+      oldPrice: Number,
+      discount: String,
+      category: String,
+      brand: String,
+      color: String,
+      quantity: Number,
+      quantityInCart: Number,
+      imgSrc: [String],
     },
   ],
   wishlist: [

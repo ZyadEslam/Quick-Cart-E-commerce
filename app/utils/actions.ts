@@ -50,3 +50,75 @@ export const addProduct = async (formData: FormData) => {
     throw error;
   }
 };
+
+// shipping form action removed in favor of client-side submission in page component
+
+export const shippingFormAction = async (
+  prevState: { success: boolean; message: string },
+  formData: FormData
+) => {
+
+  try {
+    const addressData = {
+      name: formData.get("name") as string,
+      phone: formData.get("phone") as string,
+      pinCode: formData.get("pinCode") as string,
+      address: formData.get("address") as string,
+      city: formData.get("city") as string,
+      state: formData.get("state") as string,
+    };
+
+    // Validate required fields
+    const requiredFields = [
+      "name",
+      "phone",
+      "pinCode",
+      "address",
+      "city",
+      "state",
+    ];
+    const missingFields = requiredFields.filter(
+      (field) => !addressData[field as keyof typeof addressData]
+    );
+
+    if (missingFields.length > 0) {
+      return {
+        success: false,
+        message: `Missing required fields: ${missingFields.join(", ")}`,
+      };
+    }
+
+    const response = await fetch(
+      `${
+        process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"
+      }/api/order-address`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(addressData),
+      }
+    );
+
+    const result = await response.json();
+
+    if (result.success) {
+      return {
+        success: true,
+        message: "Address created successfully!",
+      };
+    } else {
+      return {
+        success: false,
+        message: result.message || "Failed to create address",
+      };
+    }
+  } catch (error) {
+    console.error("Error creating address:", error);
+    return {
+      success: false,
+      message: "Failed to create address. Please try again.",
+    };
+  }
+};
