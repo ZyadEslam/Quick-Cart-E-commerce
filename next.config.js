@@ -9,7 +9,6 @@ const nextConfig = {
     unoptimized: true, // If you're having image optimization issues
   },
   webpack: (config) => {
-    // Handle framer-motion module
     config.module = config.module || {};
     config.module.rules = config.module.rules || [];
 
