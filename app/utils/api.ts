@@ -4,7 +4,6 @@ import { ProductCardProps } from "../types/types";
 const API_BASE_URL = `${
   process.env.VERCEL_URL ? process.env.VERCEL_URL : "http://localhost:3000"
 }/api`;
-
 export const api = {
   getProducts: async () => {
     const res = await fetch(`${API_BASE_URL}/product`, {
