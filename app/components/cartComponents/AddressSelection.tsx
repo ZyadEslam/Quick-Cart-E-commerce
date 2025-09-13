@@ -1,13 +1,13 @@
 "use client";
 import React, { useState, useEffect, useRef } from "react";
-import Link from "next/link";
+// import Link from "next/link";
 import { AddressProps } from "@/app/types/types";
 
 interface AddressSelectionProps {
   setSelectedAddress: (addrees: AddressProps) => void;
   selectedAddress: AddressProps;
   //   onAddressSelect?: (address: Address | null) => void;
-  setSelectedAddressId: (addreesId: string) => void;
+  setSelectedAddressId?: (addreesId: string) => void;
 }
 
 const AddressSelection = ({
@@ -45,15 +45,14 @@ const AddressSelection = ({
   }, []);
 
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(event.target as Node)
-      ) {
-        setIsOpen(false);
-      }
-    };
-
+    // const handleClickOutside = (event: MouseEvent) => {
+    //   if (
+    //     dropdownRef.current &&
+    //     !dropdownRef.current.contains(event.target as Node)
+    //   ) {
+    //     setIsOpen(false);
+    //   }
+    // };
     // document.addEventListener("mousedown", handleClickOutside);
     // return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);

@@ -34,7 +34,7 @@ const OrderSummary = ({ cart }: { cart: ProductCardProps[] }) => {
           <label className="font-medium text-gray-600">SELECT ADDRESS</label>
           <AddressSelection
             setSelectedAddress={setSelectedAddress}
-            selectedAddress={selectedAddress}
+            selectedAddress={selectedAddress as AddressProps}
           />
         </div>
         <div className="order-summary-pair">

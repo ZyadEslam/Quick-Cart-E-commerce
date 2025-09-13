@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { Product } from "../types/types";
+import { ProductCardProps } from "../types/types";
 export interface WishlistState {
-  wishlist: Product[];
+  wishlist: ProductCardProps[];
   user: string | null;
   wishlistCounter: number;
 }
@@ -17,8 +17,8 @@ export const wishlistSlice = createSlice({
   reducers: {
     addToWishlist: (state, action) => {
       const itemToAdd = state.wishlist.find(
-        (item) => item.id === action.payload.product.id
-      ) as Product;
+        (item) => item._id === action.payload.product.id
+      ) as ProductCardProps;
 
       if (!itemToAdd) {
         state.wishlistCounter += 1;
@@ -30,14 +30,13 @@ export const wishlistSlice = createSlice({
     removeFromWishlist: (state, action) => {
       console.log(action.payload);
       const item = state.wishlist.find(
-        (item) => item.id === action.payload
-      ) as Product;
+        (item) => item._id === action.payload
+      ) as ProductCardProps;
       if (item) {
         state.wishlistCounter -= 1;
         state.wishlist = state.wishlist.filter(
-          (item) => item.id !== action.payload
+          (item) => item._id !== action.payload
         );
-        
       }
     },
     clearWishlist: (state) => {

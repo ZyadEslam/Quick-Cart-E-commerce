@@ -1,12 +1,11 @@
 import type { Metadata } from "next";
 import { Outfit } from "next/font/google";
 import "./style/globals.css";
-import GeneralLayout from "./(generalPreview)/layout";
 import Provider from "./components/Provider";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "./api/auth/[...nextauth]/auth";
 import StoreProvider from "./components/StoreProvider";
-// import GetUserFromDB from "./components/GetUserFromDB";
+import { Footer, UserNav } from "./components";
 
 const outfit = Outfit({
   variable: "--font-outfit400",
@@ -40,8 +39,9 @@ export default async function RootLayout({
       >
         <Provider session={session}>
           <StoreProvider>
-            <GeneralLayout>{children}</GeneralLayout>
-            {/* <GetUserFromDB /> */}
+            <UserNav />
+            <main>{children}</main>
+            <Footer />
           </StoreProvider>
         </Provider>
       </body>
