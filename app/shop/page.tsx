@@ -1,7 +1,6 @@
 import { lazy, Suspense } from "react";
 import LoadingSpinner from "../UI/LoadingSpinner";
 const ProductsGroup = lazy(() => import("../components/ProductsGroup"));
-// import { ProductsGroup } from "../components";
 const ShopPage = () => {
   return (
     <div className="md:px-[8.5%] sm:px-[5%]">

@@ -31,7 +31,6 @@ const UserNav = () => {
   }, []);
 
   useEffect(() => {
-
     const getListsFromUser = async () => {
       if (localStorage.getItem("wishlist")) {
         if (
@@ -57,11 +56,10 @@ const UserNav = () => {
         localStorage.setItem("cart", JSON.stringify([]));
         console.log("No user authenticated");
       }
-      
     };
-    
+
     getListsFromUser();
-  }, []);
+  }, [session?.user]);
 
   return (
     <div
