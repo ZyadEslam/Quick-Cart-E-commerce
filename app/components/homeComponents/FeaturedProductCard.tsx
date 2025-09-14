@@ -23,7 +23,7 @@ const FeaturedProductCard = ({
   const handleExploreClick = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    router.push("/products");
+    router.push("/shop");
   };
 
   return (
