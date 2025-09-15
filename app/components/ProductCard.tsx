@@ -6,6 +6,7 @@ import Link from "next/link";
 import Toast from "../UI/Toast";
 import { Heart } from "lucide-react";
 // import { WishlistToStorageHandler } from "../utils/utilFunctions";
+import { getBaseUrl } from "../utils/api";
 import {
   addToWishlistStorage,
   isInWishlistStorage,
@@ -66,7 +67,7 @@ const ProductCard = ({ product }: { product: ProductCardProps }) => {
         ></Toast>
       )}
       <Link
-        href={`http://localhost:3000/product/${product._id}`}
+        href={`${getBaseUrl()}/product/${product._id}`}
         className="md:w-1/6 sm:w-[48%] h-[320px]"
       >
         <div className="relative bg-secondaryLight rounded-lg mb-2">
