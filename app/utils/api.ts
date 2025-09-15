@@ -106,6 +106,7 @@ export const api = {
         },
       });
       const data = await res.json();
+      console.log("fetche products:", data);
 
       return data.products;
     } catch (error) {
