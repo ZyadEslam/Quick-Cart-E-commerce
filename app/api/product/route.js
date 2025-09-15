@@ -29,7 +29,7 @@ const GET = async () => {
   try {
     await connectDB();
     const products = await Product.find();
-
+    console.log(`Fetched ${products.length} products from the database.`);
     // Convert to plain objects and remove image buffers
     const productsWithoutBuffers = products.map((product) => {
       const productObj = product.toObject();
