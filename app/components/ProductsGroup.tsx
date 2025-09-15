@@ -1,45 +1,56 @@
-import React from "react";
+"use client";
+import React, { useEffect, useState } from "react";
 import ProductCard from "./ProductCard";
 import { ProductCardProps } from "../types/types";
 import { api } from "../utils/api";
 
-const ProductsGroup = async ({
+const ProductsGroup = ({
   numOfProducts,
   customClassName,
 }: {
   numOfProducts?: number;
   customClassName?: string;
 }) => {
-  try {
-    const products = await api.getProducts();
-    console.log("Fetched products:", products);
+  const [products, setProducts] = useState<ProductCardProps[]>([]);
+  const [filteredProducts, setFilterProducts] = useState<ProductCardProps[]>(
+    []
+  );
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const products = await api.getProducts();
+        console.log("Fetched products:", products);
+        setProducts(products);
+        let filteredProducts: ProductCardProps[] = [];
 
-    let filteredProducts: ProductCardProps[] = [];
+        if (numOfProducts) {
+          filteredProducts = products.slice(0, numOfProducts);
+          setFilterProducts(filteredProducts);
+        }
+      } catch (error) {
+        console.error("Error fetching products:", error);
+        return (
+          <div>
+            <p> Error loading products. Please try again later.</p>
+          </div>
+        );
+      }
+    };
+    fetchProducts();
+  }, [numOfProducts]);
 
-    if (numOfProducts) {
-      filteredProducts = products.slice(0, numOfProducts);
-    }
-
-    return (
-      <section className={`${customClassName}`}>
-        <div className="flex flex-wrap md:gap-4 gap-0 justify-between mb-8">
-          {!numOfProducts
-            ? products.map((product: ProductCardProps) => (
-                <ProductCard key={product._id} product={product} />
-              ))
-            : filteredProducts.map((product: ProductCardProps) => (
-                <ProductCard key={product._id} product={product} />
-              ))}
-        </div>
-      </section>
-    );
-  } catch (error) {
-    console.error("Error fetching products:", error);
-    return (
-      <div>
-        <p> Error loading products. Please try again later.</p>
+  return (
+    <section className={`${customClassName}`}>
+      <div className="flex flex-wrap md:gap-4 gap-0 justify-between mb-8">
+        {!numOfProducts
+          ? products.map((product: ProductCardProps) => (
+              <ProductCard key={product._id} product={product} />
+            ))
+          : filteredProducts.map((product: ProductCardProps) => (
+              <ProductCard key={product._id} product={product} />
+            ))}
       </div>
-    );
-  }
+    </section>
+  );
 };
 export default ProductsGroup;
