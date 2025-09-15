@@ -106,11 +106,11 @@ export const api = {
         },
       });
       const data = await res.json();
-      console.log(data);
 
       return data.products;
     } catch (error) {
       console.log("Error fetching products:", error);
+      return error;
     }
   },
   getUser: async (id: string) => {
