@@ -95,6 +95,8 @@ const API_BASE_URL = `${getBaseUrl()}/api`;
 
 export const api = {
   getProducts: async () => {
+    console.log("API_BASE_URL:", API_BASE_URL);
+
     try {
       const res = await fetch(`${API_BASE_URL}/product`, {
         method: "GET",
