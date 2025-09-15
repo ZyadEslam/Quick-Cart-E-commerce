@@ -95,17 +95,23 @@ const API_BASE_URL = `${getBaseUrl()}/api`;
 
 export const api = {
   getProducts: async () => {
-    const res = await fetch(`${API_BASE_URL}/product`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      next: {
-        revalidate: 3600,
-      },
-    });
-    const data = await res.json();
-    return data.products;
+    try {
+      const res = await fetch(`${API_BASE_URL}/product`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        next: {
+          revalidate: 3600,
+        },
+      });
+      const data = await res.json();
+      console.log(data);
+
+      return data.products;
+    } catch (error) {
+      console.log("Error fetching products:", error);
+    }
   },
   getUser: async (id: string) => {
     try {
