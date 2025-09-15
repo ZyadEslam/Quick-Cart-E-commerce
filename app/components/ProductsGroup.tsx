@@ -38,7 +38,6 @@ const ProductsGroup = async ({
     return (
       <div>
         <p> Error loading products. Please try again later.</p>
-        <p>{error as string}</p>
       </div>
     );
   }
