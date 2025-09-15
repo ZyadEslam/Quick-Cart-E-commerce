@@ -28,11 +28,11 @@ const POST = async (req) => {
 const GET = async () => {
   try {
     await connectDB();
-    const products = await Product.find();
+    const products = await Product.find().lean();
     console.log(`Fetched ${products.length} products from the database.`);
     // Convert to plain objects and remove image buffers
     const productsWithoutBuffers = products.map((product) => {
-      const productObj = product.toObject();
+      const productObj = product;
       // Replace image buffers with image count
       productObj.imageCount = productObj.imgSrc.length;
       delete productObj.imgSrc;
