@@ -1,4 +1,3 @@
-// auth.ts - UPDATED
 import GoogleProvider from "next-auth/providers/google";
 import connectDB from "@/app/utils/db";
 import User from "@/app/models/user";
@@ -20,40 +19,61 @@ export const authOptions = {
   ],
   secret: process.env.NEXTAUTH_SECRET,
 
-  // Add these for better error handling
-  // debug: process.env.NODE_ENV === 'development',
   pages: {
     signIn: '/auth/signin',
-    error: '/auth/error', // Create this page
+    error: '/auth/error', 
   },
 
   callbacks: {
     async signIn({ user }: { user: NextAuthUser }) {
-      await connectDB();
-      if (user && user.email) {
-        const dbUser = await User.findOneAndUpdate(
-          { email: user.email },
-          { $setOnInsert: { name: user.name, email: user.email } },
-          { upsert: true, new: true }
-        );
-        user.id = dbUser._id.toString();
+      try {
+        await connectDB();
+        if (user && user.email) {
+          const dbUser = await User.findOneAndUpdate(
+            { email: user.email },
+            { $setOnInsert: { name: user.name, email: user.email } },
+            { upsert: true, new: true }
+          );
+          user.id = dbUser._id.toString();
+        }
+        return true;
+      } catch (error) {
+        console.error("SignIn callback error:", error);
+        return false; // Return false to prevent sign-in on error
       }
-      return true;
     },
+    
     async session({ session, token }: { session: Session; token: JWT }) {
-      if (session?.user && token?.sub) {
-        session.user.id = token.sub;
-        session.user.isAdmin = token.isAdmin as boolean;
+      try {
+        if (session?.user && token?.sub) {
+          session.user.id = token.sub;
+          session.user.isAdmin = token.isAdmin as boolean;
+        }
+        return session;
+      } catch (error) {
+        console.error("Session callback error:", error);
+        return session; // Return session even if there's an error to prevent complete failure
       }
-      return session;
     },
+    
     async jwt({ token, user }: { token: JWT; user?: NextAuthUser }) {
-      if (user) {
-        token.sub = user.id;
-        const dbUser = await api.getUser(token.sub);
-        token.isAdmin = dbUser?.isAdmin || false;
+      try {
+        if (user) {
+          token.sub = user.id;
+          // Add error handling for API call
+          try {
+            const dbUser = await api.getUser(token.sub);
+            token.isAdmin = dbUser?.isAdmin || false;
+          } catch (apiError) {
+            console.error("Error fetching user from API:", apiError);
+            token.isAdmin = false; // Default to false if API call fails
+          }
+        }
+        return token;
+      } catch (error) {
+        console.error("JWT callback error:", error);
+        return token; // Return token even if there's an error
       }
-      return token;
     },
   },
 };

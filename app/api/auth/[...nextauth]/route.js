@@ -1,17 +1,12 @@
-// import NextAuth from "next-auth";
-// import { authOptions } from "./auth";
-
-// const handler = NextAuth(authOptions);
-// export { handler as GET, handler as POST };
-
 import NextAuth from "next-auth";
 import { authOptions } from "./auth";
 
-// Add this to handle Vercel URL properly
 const adjustedAuthOptions = {
   ...authOptions,
   // Ensure the base URL is set correctly for production
   basePath: "/api/auth",
+  // Add debug mode for production troubleshooting
+  debug: process.env.NODE_ENV === "development",
   // This helps with OAuth callback URLs in production
   cookies: {
     sessionToken: {
@@ -20,10 +15,26 @@ const adjustedAuthOptions = {
         httpOnly: true,
         sameSite: "lax",
         path: "/",
-        secure:
-          process.env.NEXTAUTH_URL?.startsWith("https://") ||
-          process.env.VERCEL_URL !== undefined,
+        secure: process.env.NODE_ENV === "production",
       },
+    },
+  },
+  // Add error handling
+  events: {
+    async signIn(message) {
+      console.log("Sign in event:", message);
+    },
+    async signOut(message) {
+      console.log("Sign out event:", message);
+    },
+    async createUser(message) {
+      console.log("Create user event:", message);
+    },
+    async session(message) {
+      console.log("Session event:", message);
+    },
+    async error(message) {
+      console.error("NextAuth error:", message);
     },
   },
 };
