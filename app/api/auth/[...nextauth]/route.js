@@ -111,6 +111,11 @@ try {
   console.log("🌍 Environment check:");
   console.log("NODE_ENV:", process.env.NODE_ENV);
   console.log("NEXTAUTH_URL:", process.env.NEXTAUTH_URL);
+  console.log("VERCEL_URL:", process.env.VERCEL_URL);
+  console.log(
+    "NEXTAUTH_URL has trailing slash:",
+    process.env.NEXTAUTH_URL?.endsWith("/")
+  );
   console.log("GOOGLE_CLIENT_ID exists:", !!process.env.GOOGLE_CLIENT_ID);
   console.log(
     "GOOGLE_CLIENT_SECRET exists:",
