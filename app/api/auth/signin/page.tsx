@@ -1,7 +1,7 @@
 // app/auth/signin/page.tsx
 import { getServerSession } from "next-auth/next";
 import { redirect } from "next/navigation";
-import { authOptions } from "../[...nextauth]/auth";
+import { authOptions } from "../../../../lib/auth";
 import SignInButtons from "./SigninButtons";
 
 export default async function SignInPage() {

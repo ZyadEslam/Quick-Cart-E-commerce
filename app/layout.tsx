@@ -3,7 +3,7 @@ import { Outfit } from "next/font/google";
 import "./style/globals.css";
 import Provider from "./components/Provider";
 import { getServerSession } from "next-auth/next";
-import { authOptions } from "./api/auth/[...nextauth]/auth";
+import { authOptions } from "../lib/auth";
 import StoreProvider from "./components/StoreProvider";
 import { Footer, UserNav } from "./components";
 

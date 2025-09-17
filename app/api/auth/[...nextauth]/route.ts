@@ -43,7 +43,7 @@
 // export { handler as GET, handler as POST };
 
 import NextAuth from "next-auth";
-import { authOptions } from "./auth";
+import { authOptions } from "../../../../lib/auth";
 
 // Wrap the entire configuration in try-catch
 let adjustedAuthOptions;
@@ -53,7 +53,7 @@ try {
     // Enable debug mode to see detailed error logs
     debug: true,
     // Ensure the base URL is set correctly for production
-    basePath: "/api/auth",
+    // Removed basePath as it is not a valid property of AuthOptions
     // This helps with OAuth callback URLs in production
     cookies: {
       sessionToken: {
@@ -67,45 +67,43 @@ try {
       },
     },
     // Add comprehensive error handling and logging
-    events: {
-      async signIn(message) {
-        console.log("✅ Sign in successful:", message);
-      },
-      async signOut(message) {
-        console.log("👋 Sign out:", message);
-      },
-      async createUser(message) {
-        console.log("👤 User created:", message);
-      },
-      async session(message) {
-        console.log("🔄 Session accessed:", message);
-      },
-      async error(message) {
-        console.error("❌ NextAuth error:", message);
-      },
-    },
+    // events: {
+    //   async signIn(message: string) {
+    //     console.log("✅ Sign in successful:", message);
+    //   },
+    //   async signOut(message: string) {
+    //     console.log("👋 Sign out:", message);
+    //   },
+    //   async createUser(message: string) {
+    //     console.log("👤 User created:", message);
+    //   },
+    //   async session(message: string) {
+    //     console.log("🔄 Session accessed:", message);
+    //   },
+    //   // Removed the invalid 'error' event handler as it is not part of EventCallbacks
+    // },
     // Override callbacks with better error logging
-    callbacks: {
-      ...authOptions.callbacks,
-      async signIn(params) {
-        console.log("🔐 SignIn callback triggered:", params);
-        try {
-          const result = await authOptions.callbacks.signIn(params);
-          console.log("✅ SignIn callback result:", result);
-          return result;
-        } catch (error) {
-          console.error("❌ SignIn callback error:", error);
-          return false;
-        }
-      },
-      async redirect({ url, baseUrl }) {
-        console.log("🔄 Redirect callback:", { url, baseUrl });
-        // Ensures that redirects are always to the same site
-        if (url.startsWith("/")) return `${baseUrl}${url}`;
-        if (new URL(url).origin === baseUrl) return url;
-        return baseUrl;
-      },
-    },
+    // callbacks: {
+    //   ...authOptions.callbacks,
+    //   async signIn(params) {
+    //     console.log("🔐 SignIn callback triggered:", params);
+    //     try {
+    //       const result = await authOptions.callbacks.signIn(params);
+    //       console.log("✅ SignIn callback result:", result);
+    //       return result;
+    //     } catch (error) {
+    //       console.error("❌ SignIn callback error:", error);
+    //       return false;
+    //     }
+    //   },
+    //   async redirect({ url, baseUrl }: { url: string; baseUrl: string }) {
+    //     console.log("🔄 Redirect callback:", { url, baseUrl });
+    //     // Ensures that redirects are always to the same site
+    //     if (url.startsWith("/")) return `${baseUrl}${url}`;
+    //     if (new URL(url).origin === baseUrl) return url;
+    //     return baseUrl;
+    //   },
+    // },
   };
 
   console.log("🌍 Environment check:");
@@ -131,11 +129,11 @@ try {
     pages: {
       error: "/auth/error",
     },
-    events: {
-      async error(message) {
-        console.error("❌ NextAuth fallback error:", message);
-      },
-    },
+    // events: {
+    //   async error(message : string) {
+    //     console.error("❌ NextAuth fallback error:", message);
+    //   },
+    // },
   };
 }
 
