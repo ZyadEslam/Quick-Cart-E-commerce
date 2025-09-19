@@ -19,9 +19,9 @@ export default async function ProductPage({ params }: Props) {
     headers: {
       "Content-Type": "application/json",
     },
-    next: {
-      revalidate: 60,
-    },
+    // next: {
+    //   revalidate: 60,
+    // },
   });
   const { product: data } = await response.json();
 
