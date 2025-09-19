@@ -1,8 +1,10 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import dbConnect from "@/lib/mongoose";
 import User from "../../../../models/user";
-
-export async function GET(req, { params }) {
+interface Params {
+  params: Promise<{ id: string }>;
+}
+export async function GET(req: NextRequest, { params }: Params) {
   try {
     await dbConnect();
     const { id } = await params;
@@ -20,7 +22,7 @@ export async function GET(req, { params }) {
   }
 }
 
-export async function POST(req, { params }) {
+export async function POST(req: NextRequest, { params }: Params) {
   try {
     await dbConnect();
     const { id } = await params;
@@ -39,6 +41,6 @@ export async function POST(req, { params }) {
       { status: 200 }
     );
   } catch (error) {
-    return NextResponse.json({ message: error.message }, { status: 500 });
+    return NextResponse.json({ message: error }, { status: 500 });
   }
 }

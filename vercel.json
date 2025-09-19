@@ -1,13 +1,5 @@
 {
   "version": 2,
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "/$1",
-      "status": 200
-    }
-  ],
-
   "functions": {
     "app/product/[id]/page.tsx": {
       "maxDuration": 30
@@ -30,6 +22,12 @@
           "value": "Content-Type, Authorization"
         }
       ]
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/$1"
     }
   ]
 }
