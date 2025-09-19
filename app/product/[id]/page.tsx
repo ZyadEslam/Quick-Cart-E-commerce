@@ -1,6 +1,8 @@
+"use client";
 import LoadingSpinner from "@/app/UI/LoadingSpinner";
-import React, { Suspense, lazy } from "react";
+import React, { Suspense, lazy, useEffect } from "react";
 import { getBaseUrl } from "@/app/utils/api";
+import { ProductCardProps } from "@/app/types/types";
 
 const ProductImagesSlider = lazy(
   () => import("../../components/ProductImagesSlider")
@@ -12,18 +14,25 @@ type Props = {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 };
 
-export default async function ProductPage({ params }: Props) {
-  const { id } = await params;
-  const response = await fetch(`${getBaseUrl()}/api/product/${id}`, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    // next: {
-    //   revalidate: 60,
-    // },
-  });
-  const { product: data } = await response.json();
+export default function ProductPage({ params }: Props) {
+  const [data, setData] = React.useState<ProductCardProps>();
+  useEffect(() => {
+    const fetchProduct = async () => {
+      const { id } = await params;
+      const response = await fetch(`${getBaseUrl()}/api/product/${id}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        next: {
+          revalidate: 60,
+        },
+      });
+      const { product: data } = await response.json();
+      setData(data);
+    };
+    fetchProduct();
+  }, []);
 
   if (!data) {
     return <div>Product not found</div>;

@@ -1,16 +1,9 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
+import { ProductCardProps } from "../types/types";
 
-interface ProductImagesSliderProps {
-  product: {
-    _id: string;
-    name: string;
-    imgSrc: string[];
-  };
-}
-
-const ProductImagesSlider = ({ product }: ProductImagesSliderProps) => {
+const ProductImagesSlider = ({ product }: { product: ProductCardProps }) => {
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [failedImages, setFailedImages] = useState<Set<number>>(new Set());
   const [loadingImages, setLoadingImages] = useState<Set<number>>(new Set());
