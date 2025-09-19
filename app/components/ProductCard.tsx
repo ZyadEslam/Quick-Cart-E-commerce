@@ -19,7 +19,7 @@ const ProductCard = ({ product }: { product: ProductCardProps }) => {
 
   useEffect(() => {
     setIsInWishlist(isInWishlistStorage(product._id as string));
-
+    
     // Set image source with proper API URL
     if (product._id) {
       setImageSrc(`/api/product/image/${product._id}?index=0`);
@@ -44,7 +44,7 @@ const ProductCard = ({ product }: { product: ProductCardProps }) => {
   const wishlistHandler = (e: React.MouseEvent) => {
     e.preventDefault(); // Prevent navigation when clicking heart
     e.stopPropagation();
-
+    
     if (!isInWishlist) {
       addToWishlistStorage(product);
       handleShowToast(true, "Added To wishlist");
@@ -56,10 +56,16 @@ const ProductCard = ({ product }: { product: ProductCardProps }) => {
     }
   };
 
-  const handleImageError = (
-    e: React.SyntheticEvent<HTMLImageElement, Event>
-  ): void => {
-    console.error("Image failed to load", e);
+  const handleImageError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+    console.error("Image failed to load");
+    console.error("Error event:", e);
+    console.error("Native event:", e.nativeEvent);
+    console.error("Target:", e.currentTarget);
+    
+    // Check if the error is due to a 404 or other HTTP error
+    const target = e.currentTarget as HTMLImageElement;
+    console.error("Failed image URL:", target.src);
+    
     setImageError(true);
   };
 
@@ -94,9 +100,7 @@ const ProductCard = ({ product }: { product: ProductCardProps }) => {
               width={300}
               height={300}
               className="w-full h-full hover:scale-[1.05] transition-all duration-300"
-              onError={(e) => {
-                handleImageError(e);
-              }}
+              onError={handleImageError}
               unoptimized={true} // Important for custom image API
             />
           ) : (
@@ -112,17 +116,15 @@ const ProductCard = ({ product }: { product: ProductCardProps }) => {
         <div className="flex items-center gap-2">
           <span className="text-[12px] ">{product.rating}</span>
           <span className="flex items-center gap-1">
-            {Array.from({ length: Math.floor(product.rating) }).map(
-              (_, index) => (
-                <Image
-                  key={"product star" + index}
-                  src={assets.star_icon}
-                  width={12}
-                  height={12}
-                  alt="star_icon"
-                />
-              )
-            )}
+            {Array.from({ length: Math.floor(product.rating) }).map((_, index) => (
+              <Image
+                key={"product star" + index}
+                src={assets.star_icon}
+                width={12}
+                height={12}
+                alt="star_icon"
+              />
+            ))}
             {Array.from({ length: Math.ceil(5 - product.rating) }).map(
               (_, index) => (
                 <Image
