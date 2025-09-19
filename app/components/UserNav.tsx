@@ -35,14 +35,16 @@ const UserNav = () => {
       if (localStorage.getItem("wishlist")) {
         if (
           session?.user &&
-          JSON.parse(localStorage.getItem("wishlist") as string).length === 0
+          Array.isArray(
+            JSON.parse(localStorage.getItem("wishlist") as string)
+          ) &&
+          JSON.parse(localStorage.getItem("wishlist") as string)?.length === 0
         ) {
           const wishlist = await api.getWishlist(session?.user?.id as string);
           localStorage.setItem("wishlist", JSON.stringify(wishlist));
         }
       } else {
         localStorage.setItem("wishlist", JSON.stringify([]));
-        console.log("No user authenticated");
       }
       if (localStorage.getItem("cart")) {
         if (
@@ -54,7 +56,6 @@ const UserNav = () => {
         }
       } else {
         localStorage.setItem("cart", JSON.stringify([]));
-        console.log("No user authenticated");
       }
     };
 
