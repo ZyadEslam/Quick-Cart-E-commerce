@@ -1,8 +1,27 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import Product from "@/app/models/product";
 import connectDB from "@/app/utils/db";
+import { StaticImageData } from "next/image";
 
-export async function GET(request, { params }) {
+// Define the params type
+interface Params {
+  params: Promise<{ id: string }>;
+}
+
+// Define the product update type
+interface ProductUpdateData {
+  name?: string;
+  description?: string;
+  price?: number;
+  oldPrice?: number;
+  discount?: number;
+  category?: string;
+  brand?: string;
+  color?: string;
+  imgSrc?: StaticImageData[]; // Use a more specific type if you know the structure
+}
+
+export async function GET(request: NextRequest, { params }: Params) {
   try {
     await connectDB();
     const { id } = await params;
@@ -20,7 +39,7 @@ export async function GET(request, { params }) {
 
     // Instead of converting to base64, we'll use the image API endpoint
     productObj.imgSrc = productObj.imgSrc.map(
-      (_, index) => `/api/product/image/${id}?index=${index}`
+      (_: unknown, index: number) => `/api/product/image/${id}?index=${index}`
     );
 
     return NextResponse.json(
@@ -30,16 +49,16 @@ export async function GET(request, { params }) {
   } catch (error) {
     console.error("Error fetching product:", error);
     return NextResponse.json(
-      { message: error.message, success: false },
+      { message: error, success: false },
       { status: 500 }
     );
   }
 }
 
-export async function POST(request, { params }) {
+export async function POST(request: NextRequest, { params }: Params) {
   try {
     await connectDB();
-    const { id } = params;
+    const { id } = await params;
     const {
       name,
       description,
@@ -50,7 +69,7 @@ export async function POST(request, { params }) {
       brand,
       color,
       imgSrc,
-    } = await request.json();
+    }: ProductUpdateData = await request.json();
 
     const product = await Product.findByIdAndUpdate(
       id,
@@ -82,16 +101,16 @@ export async function POST(request, { params }) {
   } catch (error) {
     console.error("Error updating product:", error);
     return NextResponse.json(
-      { message: error.message, success: false },
+      { message: error, success: false },
       { status: 500 }
     );
   }
 }
 
-export async function DELETE(request, { params }) {
+export async function DELETE(request: NextRequest, { params }: Params) {
   try {
     await connectDB();
-    const { id } = params;
+    const { id } = await params;
     const product = await Product.findByIdAndDelete(id);
 
     if (!product) {
@@ -108,16 +127,16 @@ export async function DELETE(request, { params }) {
   } catch (error) {
     console.error("Error deleting product:", error);
     return NextResponse.json(
-      { message: error.message, success: false },
+      { message: error, success: false },
       { status: 500 }
     );
   }
 }
 
-export async function PATCH(request, { params }) {
+export async function PATCH(request: NextRequest, { params }: Params) {
   try {
     await connectDB();
-    const { id } = params;
+    const { id } = await params;
     const {
       name,
       description,
@@ -128,7 +147,7 @@ export async function PATCH(request, { params }) {
       brand,
       color,
       imgSrc,
-    } = await request.json();
+    }: ProductUpdateData = await request.json();
 
     const product = await Product.findByIdAndUpdate(
       id,
@@ -160,7 +179,7 @@ export async function PATCH(request, { params }) {
   } catch (error) {
     console.error("Error updating product:", error);
     return NextResponse.json(
-      { message: error.message, success: false },
+      { message: error, success: false },
       { status: 500 }
     );
   }
