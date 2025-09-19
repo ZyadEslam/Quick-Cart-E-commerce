@@ -56,7 +56,6 @@ export default function AuthButtons() {
   const { data: session, status } = useSession();
 
   const handleSignIn = async () => {
-    console.log("🔐 Sign in button clicked");
     try {
       console.log("🚀 Starting Google sign in...");
       const result = await signIn("google", { 

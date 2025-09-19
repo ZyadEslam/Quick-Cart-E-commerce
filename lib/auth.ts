@@ -13,14 +13,6 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
-    async signIn({ user }) {
-      // You can add custom sign-in logic here to determine if user is admin
-      // For example, check against a list of admin emails
-      const adminEmails = process.env.ADMIN_EMAILS?.split(",") || [];
-      user.isAdmin = adminEmails.includes(user.email as string);
-
-      return true;
-    },
     async jwt({ token, account, user, trigger, session }) {
       // Add user id and isAdmin to the token when user signs in
       if (account && user) {
