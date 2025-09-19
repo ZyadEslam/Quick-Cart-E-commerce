@@ -40,10 +40,10 @@ export const authOptions: NextAuthOptions = {
   ],
   secret: process.env.NEXTAUTH_SECRET,
   debug: true, // Enable debug mode
-  pages: {
-    signIn: "/auth/signin",
-    error: "/auth/error",
-  },
+  // pages: {
+  //   signIn: "/auth/signin",
+  //   error: "/auth/error",
+  // },
   callbacks: {
     async signIn({ user }: { user: NextAuthUser }) {
       console.log("🔐 SignIn callback triggered for user:", user.email);

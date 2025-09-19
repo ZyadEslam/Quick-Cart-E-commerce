@@ -1,5 +1,4 @@
 "use client";
-
 import { ProductCardProps } from "@/app/types/types";
 import LoadingSpinner from "@/app/UI/LoadingSpinner";
 import { api } from "@/app/utils/api";
