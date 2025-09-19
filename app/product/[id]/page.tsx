@@ -1,5 +1,6 @@
 import LoadingSpinner from "@/app/UI/LoadingSpinner";
 import React, { Suspense, lazy } from "react";
+import { getBaseUrl } from "@/app/utils/api";
 
 const ProductImagesSlider = lazy(
   () => import("../../components/ProductImagesSlider")
@@ -13,7 +14,7 @@ type Props = {
 
 export default async function ProductPage({ params }: Props) {
   const { id } = await params;
-  const response = await fetch(`http://localhost:3000/api/product/${id}`, {
+  const response = await fetch(`${getBaseUrl()}/api/product/${id}`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
