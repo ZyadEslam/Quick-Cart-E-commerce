@@ -75,12 +75,12 @@ export default function ProductPage({ params }: Props) {
   return (
     <div className="w-full px-4 sm:px-[5%] md:px-[8.5%] py-4 sm:py-6 md:py-8">
       <div className="flex flex-col justify-between md:flex-row gap-4 sm:gap-6 md:gap-8">
-        <Suspense fallback={<LoadingSpinner />}>
+        {/* <Suspense fallback={<LoadingSpinner />}>
           <ProductImagesSlider product={product} />
         </Suspense>
         <Suspense fallback={<LoadingSpinner />}>
           <ProductDetails data={product} />
-        </Suspense>
+        </Suspense> */}
       </div>
     </div>
   );
