@@ -1,8 +1,8 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import Product from "@/app/models/product";
 import connectDB from "@/app/utils/db";
 
-const POST = async (req) => {
+const POST = async (req: NextRequest) => {
   try {
     await connectDB();
     const productData = await req.json();
@@ -17,7 +17,7 @@ const POST = async (req) => {
   } catch (error) {
     console.error("Error creating product:", error);
     return NextResponse.json(
-      { message: error.message, success: false },
+      { message: error, success: false },
       { status: 500 }
     );
   }
@@ -31,7 +31,7 @@ const GET = async () => {
     // Convert to plain objects and remove image buffers
     const productsWithoutBuffers = products.map((product) => {
       // const productObj = product;
-      const productObj = {...product};
+      const productObj = { ...product };
 
       // Replace image buffers with image count
       productObj.imageCount = productObj.imgSrc.length;
@@ -46,7 +46,7 @@ const GET = async () => {
   } catch (error) {
     console.error("Error fetching products:", error);
     return NextResponse.json(
-      { message: error.message, success: false },
+      { message: error, success: false },
       { status: 500 }
     );
   }
