@@ -2,8 +2,6 @@ import { NextResponse } from "next/server";
 import Product from "@/app/models/product";
 import connectDB from "@/app/utils/db";
 
-export const dynamic = "force-static";
-
 const POST = async (req) => {
   try {
     await connectDB();
