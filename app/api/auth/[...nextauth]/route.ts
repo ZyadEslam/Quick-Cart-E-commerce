@@ -72,3 +72,4 @@ const createHandler = () => {
 const handler = createHandler();
 
 export { handler as GET, handler as POST };
+  

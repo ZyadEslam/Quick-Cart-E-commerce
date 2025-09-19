@@ -30,7 +30,9 @@ const GET = async () => {
     console.log(`Fetched ${products.length} products from the database.`);
     // Convert to plain objects and remove image buffers
     const productsWithoutBuffers = products.map((product) => {
-      const productObj = product;
+      // const productObj = product;
+      const productObj = {...product};
+
       // Replace image buffers with image count
       productObj.imageCount = productObj.imgSrc.length;
       delete productObj.imgSrc;
