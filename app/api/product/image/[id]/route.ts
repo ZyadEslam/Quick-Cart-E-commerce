@@ -1,3 +1,4 @@
+// app/api/product/image/[id]/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import Product from "@/app/models/product";
 import connectDB from "@/app/utils/db";
@@ -21,40 +22,57 @@ export async function GET(
       return new NextResponse("Product not found", { status: 404 });
     }
 
-    if (!product.imgSrc || !product.imgSrc[imageIndex]) {
-      console.error(`Image not found for product ${id} at index ${imageIndex}`);
-      console.error(`Product has ${product.imgSrc?.length || 0} images`);
-      return new NextResponse("Image not found", { status: 404 });
+    if (!product.imgSrc || product.imgSrc.length === 0) {
+      console.error(`No images found for product ${id}`);
+      return new NextResponse("No images found", { status: 404 });
     }
 
-    const imageBuffer = product.imgSrc[imageIndex];
-
-    // Check if the buffer is valid
-    if (!imageBuffer || !imageBuffer.data || imageBuffer.data.length === 0) {
+    if (imageIndex >= product.imgSrc.length) {
       console.error(
-        `Invalid image buffer for product ${id}, index ${imageIndex}`
+        `Image index ${imageIndex} out of bounds for product ${id}`
       );
-      return new NextResponse("Invalid image data", { status: 500 });
+      return new NextResponse("Image index out of bounds", { status: 404 });
     }
 
-    // Convert Buffer to Uint8Array
-    const uint8Array = new Uint8Array(imageBuffer.data);
+    const imageData = product.imgSrc[imageIndex];
+
+    // Check if the image data is valid (not empty)
+    if (!imageData || imageData === "") {
+      console.error(`Empty image data for product ${id}, index ${imageIndex}`);
+      return new NextResponse("Empty image data", { status: 404 });
+    }
+
+    // Convert base64 to buffer
+    let imageBuffer;
+    try {
+      // Handle both Binary.createFromBase64 objects and plain base64 strings
+      const base64String =
+        typeof imageData === "object" && imageData.base64
+          ? imageData.base64
+          : imageData;
+
+      // Remove data URL prefix if present
+      const cleanBase64 = base64String.replace(/^data:image\/\w+;base64,/, "");
+      imageBuffer = Buffer.from(cleanBase64, "base64");
+    } catch (error) {
+      console.error(`Error converting base64 to buffer: ${error}`);
+      return new NextResponse("Invalid image format", { status: 500 });
+    }
 
     console.log(
-      `Serving image for product ${id}, size: ${uint8Array.length} bytes`
+      `Serving image for product ${id}, size: ${imageBuffer.length} bytes`
     );
 
-    return new NextResponse(uint8Array, {
+    // Return the image buffer
+    return new NextResponse(imageBuffer, {
       headers: {
         "Content-Type": "image/jpeg",
         "Cache-Control": "public, max-age=31536000",
-        "Content-Length": uint8Array.length.toString(),
-        "Access-Control-Allow-Origin": "*", // Add this if needed
+        "Content-Length": imageBuffer.length.toString(),
       },
     });
   } catch (error) {
     console.error("Error serving image:", error);
-    // console.error("Error stack:", error.stack);
     return new NextResponse("Error serving image", { status: 500 });
   }
 }
