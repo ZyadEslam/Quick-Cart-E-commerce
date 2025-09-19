@@ -5,8 +5,6 @@ import { assets } from "@/public/assets/assets";
 import Link from "next/link";
 import Toast from "../UI/Toast";
 import { Heart } from "lucide-react";
-// import { WishlistToStorageHandler } from "../utils/utilFunctions";
-import { getBaseUrl } from "../utils/api";
 import {
   addToWishlistStorage,
   isInWishlistStorage,
@@ -16,9 +14,16 @@ import { ProductCardProps } from "../types/types";
 
 const ProductCard = ({ product }: { product: ProductCardProps }) => {
   const [isInWishlist, setIsInWishlist] = useState(false);
+  const [imageError, setImageError] = useState(false);
+  const [imageSrc, setImageSrc] = useState("");
 
   useEffect(() => {
     setIsInWishlist(isInWishlistStorage(product._id as string));
+
+    // Set image source with proper API URL
+    if (product._id) {
+      setImageSrc(`/api/product/image/${product._id}?index=0`);
+    }
   }, [product._id]);
 
   const [showToast, setShowToast] = useState({ show: false, message: "" });
@@ -48,6 +53,13 @@ const ProductCard = ({ product }: { product: ProductCardProps }) => {
     }
   };
 
+  const handleImageError = () => {
+    console.error("Image failed to load");
+    setImageError(true);
+    // Fallback to a placeholder image
+    // setImageSrc(assets.placeholder_image); // Make sure to add this to your assets
+  };
+
   return (
     <div className="relative md:w-1/6 sm:w-[48%] h-[320px]">
       <div
@@ -64,20 +76,28 @@ const ProductCard = ({ product }: { product: ProductCardProps }) => {
         <Toast
           state={showToast.message.includes("Added") ? "success" : "fail"}
           message={showToast.message}
-        ></Toast>
+        />
       )}
       <Link
-        href={`${getBaseUrl()}/product/${product._id}`}
-        className="md:w-1/6 sm:w-[48%] h-[320px]"
+        href={`/product/${product._id}`}
+        className="md:w-1/6 sm:w-[48%] h-[320px] block"
       >
-        <div className="relative bg-secondaryLight rounded-lg mb-2">
-          <Image
-            src={`/api/product/image/${product._id}?index=0`}
-            alt={`${product.name}`}
-            width={300}
-            height={300}
-            className="w-full h-full hover:scale-[1.05] transition-all duration-300"
-          />
+        <div className="relative bg-secondaryLight rounded-lg mb-2 h-48 overflow-hidden">
+          {imageSrc && !imageError ? (
+            <Image
+              src={imageSrc}
+              alt={`${product.name}`}
+              width={300}
+              height={300}
+              className="w-full h-full object-cover hover:scale-[1.05] transition-all duration-300"
+              onError={handleImageError}
+              unoptimized={true} // Important for custom image API
+            />
+          ) : (
+            <div className="w-full h-full bg-gray-200 flex items-center justify-center">
+              <span className="text-gray-400">No image</span>
+            </div>
+          )}
         </div>
         <p className="font-medium">{product.name}</p>
         <p className="text-[12px] font-light text-gray-400 truncate">
@@ -86,15 +106,17 @@ const ProductCard = ({ product }: { product: ProductCardProps }) => {
         <div className="flex items-center gap-2">
           <span className="text-[12px] ">{product.rating}</span>
           <span className="flex items-center gap-1">
-            {Array.from({ length: product.rating }).map((_, index) => (
-              <Image
-                key={"product star" + index}
-                src={assets.star_icon}
-                width={12}
-                height={12}
-                alt="star_icon"
-              />
-            ))}
+            {Array.from({ length: Math.floor(product.rating) }).map(
+              (_, index) => (
+                <Image
+                  key={"product star" + index}
+                  src={assets.star_icon}
+                  width={12}
+                  height={12}
+                  alt="star_icon"
+                />
+              )
+            )}
             {Array.from({ length: Math.ceil(5 - product.rating) }).map(
               (_, index) => (
                 <Image
@@ -109,7 +131,7 @@ const ProductCard = ({ product }: { product: ProductCardProps }) => {
           </span>
         </div>
         <div className="flex items-center justify-between mt-2">
-          <span className="font-semibold ">{product.price}</span>
+          <span className="font-semibold ">${product.price}</span>
           <span className="text-[12px] border border-gray-200 rounded-full px-4 py-1 text-gray-500">
             Buy now
           </span>

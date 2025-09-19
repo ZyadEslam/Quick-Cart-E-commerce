@@ -103,7 +103,6 @@ export const api = {
         headers: {
           "Content-Type": "application/json",
         },
-        
       });
       const data = await res.json();
       console.log("fetche products:", data);
@@ -113,6 +112,21 @@ export const api = {
       console.log("Error fetching products:", error);
       return error;
     }
+  },
+  getProduct: async (id: string) => {
+    const response = await fetch(`/api/product/${id}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch product: ${response.status}`);
+    }
+
+    const { product: data } = await response.json();
+    return data;
   },
   getUser: async (id: string) => {
     try {
