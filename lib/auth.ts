@@ -13,16 +13,31 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
-    async jwt({ token, account, user }) {
-      // Add user id to the token when user signs in
+    async signIn({ user }) {
+      // You can add custom sign-in logic here to determine if user is admin
+      // For example, check against a list of admin emails
+      const adminEmails = process.env.ADMIN_EMAILS?.split(",") || [];
+      user.isAdmin = adminEmails.includes(user.email as string);
+
+      return true;
+    },
+    async jwt({ token, account, user, trigger, session }) {
+      // Add user id and isAdmin to the token when user signs in
       if (account && user) {
         token.accessToken = account.access_token;
         token.id = user.id; // Add user id to the token
+        token.isAdmin = user.isAdmin; // Add isAdmin flag to the token
       }
+
+      // Update isAdmin when session is updated (if needed)
+      if (trigger === "update" && session?.isAdmin !== undefined) {
+        token.isAdmin = session.isAdmin;
+      }
+
       return token;
     },
     async session({ session, token }) {
-      // Send properties to the client, including the user id
+      // Send properties to the client, including the user id and isAdmin
       if (session.user && token.sub) {
         session.user.id = token.sub; // Use the sub claim which is the user ID
       }
@@ -32,10 +47,10 @@ export const authOptions: NextAuthOptions = {
         session.user.id = token.id as string;
       }
 
-      // // Also add the access token if needed
-      // if (token.accessToken) {
-      //   session.accessToken = token.accessToken as string;
-      // }
+      // Add isAdmin to session
+      if (token.isAdmin !== undefined) {
+        session.user.isAdmin = token.isAdmin as boolean;
+      }
 
       return session;
     },

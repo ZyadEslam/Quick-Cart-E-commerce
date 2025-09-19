@@ -141,7 +141,8 @@ export const api = {
   getWishlist: async (userId: string) => {
     try {
       const response = await fetch(`${API_BASE_URL}/user/${userId}/wishlist`);
-      return response.json();
+      const wishlist = await response.json();
+      return wishlist;
     } catch (err) {
       return NextResponse.json(err, { status: 500 });
     }
