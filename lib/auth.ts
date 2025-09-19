@@ -14,30 +14,46 @@ export const authOptions: NextAuthOptions = {
   ],
   callbacks: {
     async jwt({ token, account, user }) {
+      // Add user id to the token when user signs in
       if (account && user) {
         token.accessToken = account.access_token;
+        token.id = user.id; // Add user id to the token
       }
       return token;
     },
-    async session({ session }) {
-      // Send properties to the client
+    async session({ session, token }) {
+      // Send properties to the client, including the user id
+      if (session.user && token.sub) {
+        session.user.id = token.sub; // Use the sub claim which is the user ID
+      }
+
+      // If you want to use the id from the token instead of sub
+      if (session.user && token.id) {
+        session.user.id = token.id as string;
+      }
+
+      // // Also add the access token if needed
+      // if (token.accessToken) {
+      //   session.accessToken = token.accessToken as string;
+      // }
+
       return session;
     },
     async redirect({ url, baseUrl }) {
       console.log("🔄 Redirect callback:", { url, baseUrl });
-      
+
       // Allows relative callback URLs
       if (url.startsWith("/")) return `${baseUrl}${url}`;
-      
+
       // Allows callback URLs on the same origin
       if (new URL(url).origin === baseUrl) return url;
-      
+
       return baseUrl;
     },
   },
   pages: {
-    error: '/auth/error',
-    signIn: '/auth/signin',
+    error: "/auth/error",
+    signIn: "/auth/signin",
   },
   debug: process.env.NODE_ENV === "development",
   session: {
