@@ -2,12 +2,16 @@
 import { ProductCardProps } from "@/app/types/types";
 import LoadingSpinner from "@/app/UI/LoadingSpinner";
 import { api } from "@/app/utils/api";
-import React, { Suspense, lazy, useEffect, useState } from "react";
+import React, {
+  // Suspense, lazy,
+  useEffect,
+  useState,
+} from "react";
 
-const ProductImagesSlider = lazy(
-  () => import("../../components/ProductImagesSlider")
-);
-const ProductDetails = lazy(() => import("../../components/ProductDetails"));
+// const ProductImagesSlider = lazy(
+//   () => import("../../components/ProductImagesSlider")
+// );
+// const ProductDetails = lazy(() => import("../../components/ProductDetails"));
 
 type Props = {
   params: Promise<{ id: string }>;
