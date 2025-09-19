@@ -103,9 +103,7 @@ export const api = {
         headers: {
           "Content-Type": "application/json",
         },
-        next: {
-          revalidate: 3600,
-        },
+        
       });
       const data = await res.json();
       console.log("fetche products:", data);
