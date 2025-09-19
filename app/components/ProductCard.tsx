@@ -19,7 +19,7 @@ const ProductCard = ({ product }: { product: ProductCardProps }) => {
 
   useEffect(() => {
     setIsInWishlist(isInWishlistStorage(product._id as string));
-
+    
     // Set image source with proper API URL
     if (product._id) {
       setImageSrc(`/api/product/image/${product._id}?index=0`);
@@ -41,7 +41,10 @@ const ProductCard = ({ product }: { product: ProductCardProps }) => {
     }, 3000);
   };
 
-  const wishlistHandler = () => {
+  const wishlistHandler = (e: React.MouseEvent) => {
+    e.preventDefault(); // Prevent navigation when clicking heart
+    e.stopPropagation();
+    
     if (!isInWishlist) {
       addToWishlistStorage(product);
       handleShowToast(true, "Added To wishlist");
@@ -56,8 +59,6 @@ const ProductCard = ({ product }: { product: ProductCardProps }) => {
   const handleImageError = () => {
     console.error("Image failed to load");
     setImageError(true);
-    // Fallback to a placeholder image
-    // setImageSrc(assets.placeholder_image); // Make sure to add this to your assets
   };
 
   return (
@@ -70,31 +71,32 @@ const ProductCard = ({ product }: { product: ProductCardProps }) => {
           className={`w-4 h-4 ${
             isInWishlist ? " text-orange " : "text-gray-500"
           } hover:text-orange`}
+          fill={isInWishlist ? "#ff7d1a" : "none"}
         />
       </div>
       {showToast.show && (
         <Toast
           state={showToast.message.includes("Added") ? "success" : "fail"}
           message={showToast.message}
-        />
+        ></Toast>
       )}
       <Link
         href={`/product/${product._id}`}
-        className="md:w-1/6 sm:w-[48%] h-[320px] block"
+        className="md:w-1/6 sm:w-[48%] h-[320px]"
       >
-        <div className="relative bg-secondaryLight rounded-lg mb-2 h-48 overflow-hidden">
+        <div className="relative bg-secondaryLight rounded-lg mb-2 h-[180px] overflow-hidden">
           {imageSrc && !imageError ? (
             <Image
               src={imageSrc}
               alt={`${product.name}`}
               width={300}
               height={300}
-              className="w-full h-full object-cover hover:scale-[1.05] transition-all duration-300"
+              className="w-full h-full hover:scale-[1.05] transition-all duration-300"
               onError={handleImageError}
               unoptimized={true} // Important for custom image API
             />
           ) : (
-            <div className="w-full h-full bg-gray-200 flex items-center justify-center">
+            <div className="w-full h-full bg-gray-200 flex items-center justify-center rounded-lg">
               <span className="text-gray-400">No image</span>
             </div>
           )}
@@ -106,17 +108,15 @@ const ProductCard = ({ product }: { product: ProductCardProps }) => {
         <div className="flex items-center gap-2">
           <span className="text-[12px] ">{product.rating}</span>
           <span className="flex items-center gap-1">
-            {Array.from({ length: Math.floor(product.rating) }).map(
-              (_, index) => (
-                <Image
-                  key={"product star" + index}
-                  src={assets.star_icon}
-                  width={12}
-                  height={12}
-                  alt="star_icon"
-                />
-              )
-            )}
+            {Array.from({ length: Math.floor(product.rating) }).map((_, index) => (
+              <Image
+                key={"product star" + index}
+                src={assets.star_icon}
+                width={12}
+                height={12}
+                alt="star_icon"
+              />
+            ))}
             {Array.from({ length: Math.ceil(5 - product.rating) }).map(
               (_, index) => (
                 <Image
