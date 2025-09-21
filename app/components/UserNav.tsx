@@ -32,31 +32,30 @@ const UserNav = () => {
 
   useEffect(() => {
     const getListsFromUser = async () => {
-      const localStorageWishlist = localStorage.getItem("wishlist");
-      const localStorageCart = localStorage.getItem("cart");
-      if (localStorageWishlist) {
+      if (localStorage.getItem("wishlist")) {
         if (
           session?.user &&
           Array.isArray(
-            JSON.parse(localStorageWishlist as string)
+            JSON.parse(localStorage.getItem("wishlist") as string)
           ) &&
-          JSON.parse(localStorageWishlist as string)?.length === 0
+          JSON.parse(localStorage.getItem("wishlist") as string)?.length === 0
         ) {
-          const userStoredWishlist = await api.getWishlist(session?.user?.id as string);
-          console.log("wishlist from db: ", userStoredWishlist);
-          localStorage.setItem("wishlist", JSON.stringify(userStoredWishlist));
+          const wishlist = await api.getWishlist(session?.user?.id as string);
+          console.log("User DB wishlist: ", wishlist);
+          
+          localStorage.setItem("wishlist", JSON.stringify(wishlist));
         }
       } else {
         localStorage.setItem("wishlist", JSON.stringify([]));
       }
-      if (localStorageCart) {
+      if (localStorage.getItem("cart")) {
         if (
           session?.user &&
-          JSON.parse(localStorageCart as string).length === 0
+          JSON.parse(localStorage.getItem("cart") as string).length === 0
         ) {
           const cart = await api.getCart(session?.user?.id as string);
-          console.log("cart from db: ", cart);
-          
+          console.log("User DB cart: ", cart);
+
           localStorage.setItem("cart", JSON.stringify(cart));
         }
       } else {
