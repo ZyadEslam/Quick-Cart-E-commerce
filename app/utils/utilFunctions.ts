@@ -49,11 +49,13 @@ export const removeFromWishlistStorage = (
 };
 
 export const isInWishlistStorage = (id: string): boolean => {
-  if (localStorage.getItem("wishlist")) {
+  const wishlist = JSON.parse(localStorage.getItem("wishlist") as string);
+  if (wishlist && Array.isArray(wishlist)) {
     return JSON.parse(localStorage.getItem("wishlist") as string).some(
       (item: ProductCardProps) => item._id === id
     );
   } else {
+    localStorage.setItem("wishlist", JSON.stringify([]));
     return false;
   }
 };
