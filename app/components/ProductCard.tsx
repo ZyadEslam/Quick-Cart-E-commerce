@@ -14,7 +14,7 @@ import { ProductCardProps } from "../types/types";
 
 const ProductCard = ({ product }: { product: ProductCardProps }) => {
   const [isInWishlist, setIsInWishlist] = useState(false);
-  // const [imageError, setImageError] = useState(false);
+  const [imageError, setImageError] = useState(false);
   const [imageSrc, setImageSrc] = useState("");
 
   useEffect(() => {
@@ -56,20 +56,20 @@ const ProductCard = ({ product }: { product: ProductCardProps }) => {
     }
   };
 
-  // const handleImageError = (
-  //   e: React.SyntheticEvent<HTMLImageElement, Event>
-  // ) => {
-  //   console.error("Image failed to load");
-  //   console.error("Error event:", e);
-  //   console.error("Native event:", e.nativeEvent);
-  //   console.error("Target:", e.currentTarget);
+  const handleImageError = (
+    // e: React.SyntheticEvent<HTMLImageElement, Event>
+  ) => {
+    // console.error("Image failed to load");
+    // console.error("Error event:", e);
+    // console.error("Native event:", e.nativeEvent);
+    // console.error("Target:", e.currentTarget);
 
-  //   // Check if the error is due to a 404 or other HTTP error
-  //   const target = e.currentTarget as HTMLImageElement;
-  //   console.error("Failed image URL:", target.src);
+    // Check if the error is due to a 404 or other HTTP error
+    // const target = e.currentTarget as HTMLImageElement;
+    // console.error("Failed image URL:", target.src);
 
-  //   setImageError(true);
-  // };
+    setImageError(true);
+  };
 
   return (
     <div className="relative md:w-1/6 sm:w-[48%] h-[320px]">
@@ -95,15 +95,14 @@ const ProductCard = ({ product }: { product: ProductCardProps }) => {
         className="md:w-1/6 sm:w-[48%] h-[320px]"
       >
         <div className="relative bg-secondaryLight rounded-lg mb-2 h-[180px] overflow-hidden">
-          {/* {imageSrc && !imageError ? ( */}
-          {imageSrc ? (
+          {imageSrc && !imageError ? (
             <Image
               src={imageSrc}
               alt={`${product.name}`}
               width={300}
               height={300}
               className="w-full h-full hover:scale-[1.05] transition-all duration-300"
-              // onError={handleImageError}
+              onError={handleImageError}
               unoptimized={true} // Important for custom image API
             />
           ) : (
