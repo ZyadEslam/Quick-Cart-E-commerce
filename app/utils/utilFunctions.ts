@@ -110,11 +110,13 @@ export const removeFromCartStorage = (
 };
 
 export const isInCartStorage = (id: string): boolean => {
-  if (localStorage.getItem("cart")) {
+  const cart = JSON.parse(localStorage.getItem("cart") as string);
+  if (cart && Array.isArray(cart)) {
     return JSON.parse(localStorage.getItem("cart") as string).some(
       (item: ProductCardProps) => item._id === id
     );
   } else {
+    localStorage.setItem("cart", JSON.stringify([]));
     return false;
   }
 };
