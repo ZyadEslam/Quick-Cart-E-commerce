@@ -32,26 +32,31 @@ const UserNav = () => {
 
   useEffect(() => {
     const getListsFromUser = async () => {
-      if (localStorage.getItem("wishlist")) {
+      const localStorageWishlist = localStorage.getItem("wishlist");
+      const localStorageCart = localStorage.getItem("cart");
+      if (localStorageWishlist) {
         if (
           session?.user &&
           Array.isArray(
-            JSON.parse(localStorage.getItem("wishlist") as string)
+            JSON.parse(localStorageWishlist as string)
           ) &&
-          JSON.parse(localStorage.getItem("wishlist") as string)?.length === 0
+          JSON.parse(localStorageWishlist as string)?.length === 0
         ) {
-          const wishlist = await api.getWishlist(session?.user?.id as string);
-          localStorage.setItem("wishlist", JSON.stringify(wishlist));
+          const userStoredWishlist = await api.getWishlist(session?.user?.id as string);
+          console.log("wishlist from db: ", userStoredWishlist);
+          localStorage.setItem("wishlist", JSON.stringify(userStoredWishlist));
         }
       } else {
         localStorage.setItem("wishlist", JSON.stringify([]));
       }
-      if (localStorage.getItem("cart")) {
+      if (localStorageCart) {
         if (
           session?.user &&
-          JSON.parse(localStorage.getItem("cart") as string).length === 0
+          JSON.parse(localStorageCart as string).length === 0
         ) {
           const cart = await api.getCart(session?.user?.id as string);
+          console.log("cart from db: ", cart);
+          
           localStorage.setItem("cart", JSON.stringify(cart));
         }
       } else {
