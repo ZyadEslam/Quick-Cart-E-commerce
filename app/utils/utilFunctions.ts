@@ -144,26 +144,45 @@ export const mergeCartWithDB = (
 
   localStorageCart.forEach((localItem) => {
     if (!localItem || !localItem._id) return; // Skip invalid items
-    // If item only exists in localStorage, add it to merged cart
-    mergedCart.push(localItem);
+
+    // Check if item already exists in the merged cart
+    const existingItem = mergedCart.find((item) => item._id === localItem._id);
+
+    // If item doesn't exist in merged cart, add it
+    if (!existingItem) {
+      mergedCart.push(localItem);
+    }
+    // If you want to handle quantity merging for cart items, you could do:
+    // else if (localItem.quantity && existingItem.quantity) {
+    //   existingItem.quantity += localItem.quantity;
+    // }
   });
 
   return mergedCart;
 };
+
 export const mergeWishlistWithDB = (
-  localStorageCart: ProductCardProps[],
+  localStorageWishlist: ProductCardProps[],
   dbWishlist: ProductCardProps[]
 ): ProductCardProps[] => {
   // Handle edge cases
-  if (!Array.isArray(localStorageCart)) localStorageCart = [];
+  if (!Array.isArray(localStorageWishlist)) localStorageWishlist = [];
   if (!Array.isArray(dbWishlist)) dbWishlist = [];
 
   const mergedWishlist = [...dbWishlist];
 
-  localStorageCart.forEach((localItem) => {
+  localStorageWishlist.forEach((localItem) => {
     if (!localItem || !localItem._id) return; // Skip invalid items
-    // If item only exists in localStorage, add it to merged wishlist
-    mergedWishlist.push(localItem);
+
+    // Check if item already exists in the merged wishlist
+    const existingItem = mergedWishlist.find(
+      (item) => item._id === localItem._id
+    );
+
+    // If item doesn't exist in merged wishlist, add it
+    if (!existingItem) {
+      mergedWishlist.push(localItem);
+    }
   });
 
   return mergedWishlist;
@@ -172,19 +191,20 @@ export const mergeWishlistWithDB = (
 export const syncWishlistOnLogin = async (userId: string) => {
   try {
     // Get wishlist from DB
-
     const response = await fetch(`${getBaseUrl()}/api/user/${userId}/wishlist`);
-
     const { wishlist: dbWishlist } = await response.json();
     console.log("dbWishlist: ", dbWishlist);
 
     // Get wishlist from localStorage
-    const localStorageCart = localStorage.getItem("wishlist")
+    const localStorageWishlist = localStorage.getItem("wishlist")
       ? JSON.parse(localStorage.getItem("wishlist") as string)
       : [];
 
-    // Merge wishlists
-    const mergedWishlist = mergeWishlistWithDB(localStorageCart, dbWishlist);
+    // Merge wishlists (no duplicates)
+    const mergedWishlist = mergeWishlistWithDB(
+      localStorageWishlist,
+      dbWishlist
+    );
 
     // Update localStorage with merged wishlist
     localStorage.setItem("wishlist", JSON.stringify(mergedWishlist));
@@ -196,6 +216,7 @@ export const syncWishlistOnLogin = async (userId: string) => {
     return [];
   }
 };
+
 export const syncCartOnLogin = async (userId: string) => {
   try {
     // Get cart from DB
@@ -207,7 +228,7 @@ export const syncCartOnLogin = async (userId: string) => {
       ? JSON.parse(localStorage.getItem("cart") as string)
       : [];
 
-    // Merge carts
+    // Merge carts (no duplicates)
     const mergedCart = mergeCartWithDB(localStorageCart, dbCart);
 
     // Update localStorage with merged cart
