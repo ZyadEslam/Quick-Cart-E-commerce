@@ -80,7 +80,7 @@ const UserNav = () => {
     };
 
     getListsFromUser();
-  }, [session?.user]);
+  }, []);
 
   return (
     <div

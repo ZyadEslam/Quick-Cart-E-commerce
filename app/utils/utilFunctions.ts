@@ -174,10 +174,10 @@ export const syncWishlistOnLogin = async (userId: string) => {
     // Get wishlist from DB
 
     const response = await fetch(`${getBaseUrl()}/api/user/${userId}/wishlist`);
-    
-    const dbWishlist = await response.json();
+
+    const { wishlist: dbWishlist } = await response.json();
     console.log("dbWishlist: ", dbWishlist);
-    
+
     // Get wishlist from localStorage
     const localStorageCart = localStorage.getItem("wishlist")
       ? JSON.parse(localStorage.getItem("wishlist") as string)
@@ -200,7 +200,7 @@ export const syncCartOnLogin = async (userId: string) => {
   try {
     // Get cart from DB
     const response = await fetch(`${getBaseUrl()}/api/user/${userId}/cart`);
-    const dbCart = await response.json();
+    const { cart: dbCart } = await response.json();
 
     // Get cart from localStorage
     const localStorageCart = localStorage.getItem("cart")

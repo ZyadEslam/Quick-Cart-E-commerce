@@ -1,9 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import dbConnect from "@/lib/mongoose";
 import User from "../../../../models/user";
+
 interface Params {
   params: Promise<{ id: string }>;
 }
+
 export async function GET(req: NextRequest, { params }: Params) {
   try {
     await dbConnect();
@@ -13,15 +15,22 @@ export async function GET(req: NextRequest, { params }: Params) {
     if (userFound) {
       const { wishlist } = userFound;
       console.log("User Wishlist from DB: ", wishlist);
-      return NextResponse.json(wishlist, { status: 200 });
+      // Return consistent JSON structure
+      return NextResponse.json({ wishlist: wishlist || [] }, { status: 200 });
     } else {
-      return NextResponse.json({ message: "User Not Found" }, { status: 401 });
+      return NextResponse.json({ message: "User Not Found", wishlist: [] }, { status: 404 });
     }
   } catch (err) {
-    NextResponse.json(err, { status: 500 });
-    console.log(err);
+    console.error("Wishlist GET error:", err);
+    // BUG FIX: You were missing 'return' here!
+    return NextResponse.json({ 
+      error: "Failed to fetch wishlist", 
+      message: err instanceof Error ? err.message : String(err),
+      wishlist: []
+    }, { status: 500 });
   }
 }
+
 export async function POST(req: NextRequest, { params }: Params) {
   try {
     await dbConnect();
@@ -29,19 +38,26 @@ export async function POST(req: NextRequest, { params }: Params) {
     const { wishlistToAdd } = await req.json();
     console.log("newWishlist: ", wishlistToAdd);
     console.log("userId: ", id);
+    
     const loggedUser = await User.findOne({ _id: id });
 
     if (!loggedUser) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
+    
     // Replace the user's wishlist with the new wishlist from the request
     loggedUser.wishlist = wishlistToAdd;
     await loggedUser.save();
+    
     return NextResponse.json(
-      { message: "Wishlist updated successfully" },
+      { message: "Wishlist updated successfully", success: true },
       { status: 200 }
     );
   } catch (error) {
-    return NextResponse.json({ message: error }, { status: 500 });
+    console.error("Wishlist POST error:", error);
+    return NextResponse.json({ 
+      message: "Failed to update wishlist",
+      error: error instanceof Error ? error.message : String(error)
+    }, { status: 500 });
   }
 }
