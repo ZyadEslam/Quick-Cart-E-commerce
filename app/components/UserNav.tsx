@@ -42,11 +42,14 @@ const UserNav = () => {
         ) {
           const wishlist = await api.getWishlist(session?.user?.id as string);
           console.log("User DB wishlist: ", wishlist);
-          
+
           localStorage.setItem("wishlist", JSON.stringify(wishlist));
         }
       } else {
         localStorage.setItem("wishlist", JSON.stringify([]));
+        console.log(
+          "User DB wishlist: No items in wishlist because some of conditions failed"
+        );
       }
       if (localStorage.getItem("cart")) {
         if (
@@ -60,6 +63,9 @@ const UserNav = () => {
         }
       } else {
         localStorage.setItem("cart", JSON.stringify([]));
+        console.log(
+          "User DB Cart: No items in cart because some of conditions failed"
+        );
       }
     };
 
