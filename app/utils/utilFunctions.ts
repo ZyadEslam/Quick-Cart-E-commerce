@@ -173,7 +173,7 @@ export const syncWishlistOnLogin = async (userId: string) => {
   try {
     // Get wishlist from DB
 
-    const response = await fetch(`${getBaseUrl()}/user/${userId}/wishlist`);
+    const response = await fetch(`${getBaseUrl()}/api/user/${userId}/wishlist`);
     const dbWishlist = await response.json();
 
     // Get wishlist from localStorage
@@ -197,7 +197,7 @@ export const syncWishlistOnLogin = async (userId: string) => {
 export const syncCartOnLogin = async (userId: string) => {
   try {
     // Get cart from DB
-    const response = await fetch(`${getBaseUrl()}/user/${userId}/cart`);
+    const response = await fetch(`${getBaseUrl()}/api/user/${userId}/cart`);
     const dbCart = await response.json();
 
     // Get cart from localStorage
