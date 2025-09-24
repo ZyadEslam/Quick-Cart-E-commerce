@@ -1,137 +1,157 @@
-// api.ts - CORRECTED VERSION
+// import { NextResponse } from "next/server";
+// import { ProductCardProps } from "../types/types";
+
+// const API_BASE_URL = `${
+//   process.env.VERCEL_URL ? process.env.VERCEL_URL : "http://localhost:3000"
+// }/api`;
+// export const api = {
+//   getProducts: async () => {
+//     const res = await fetch(`${API_BASE_URL}/product`, {
+//       method: "GET",
+//       headers: {
+//         "Content-Type": "application/json",
+//       },
+//       next: {
+//         revalidate: 3600,
+//       },
+//     });
+//     const data = await res.json();
+//     return data.products;
+//   },
+//   getUser: async (id: string) => {
+//     try {
+//       const response = await fetch(`${API_BASE_URL}/user/${id}`);
+//       const user = await response.json();
+//       return user;
+//     } catch (err) {
+//       console.log(err);
+//     }
+//   },
+//   getWishlist: async (userId: string) => {
+//     try {
+//       const response = await fetch(`${API_BASE_URL}/user/${userId}/wishlist`);
+//       return response.json();
+//     } catch (err) {
+//       return NextResponse.json(err, { status: 500 });
+//     }
+//   },
+//   mergeWishlist: async (
+//     wishlistToAdd: ProductCardProps[],
+//     userId: string | undefined
+//   ) => {
+//     try {
+//       const response = await fetch(`${API_BASE_URL}/user/${userId}/wishlist`, {
+//         method: "POST",
+//         body: JSON.stringify({
+//           wishlistToAdd,
+//           // userId
+//         }),
+//       });
+//       localStorage.setItem("wishlist", JSON.stringify([]));
+//       return response.json();
+//     } catch (err) {
+//       return NextResponse.json(err, { status: 401 });
+//     }
+//   },
+//   getCart: async (userId: string) => {
+//     try {
+//       const response = await fetch(`${API_BASE_URL}/user/${userId}/cart`);
+//       return response.json();
+//     } catch (err) {
+//       return NextResponse.json(err, { status: 500 });
+//     }
+//   },
+//   mergeCart: async (
+//     cartToAdd: ProductCardProps[],
+//     userId: string | undefined
+//   ) => {
+//     try {
+//       const response = await fetch(`${API_BASE_URL}/user/${userId}/cart`, {
+//         method: "POST",
+//         body: JSON.stringify({
+//           cartToAdd,
+//         }),
+//       });
+//       localStorage.setItem("cart", JSON.stringify([]));
+//       return response.json();
+//     } catch (err) {
+//       return NextResponse.json(err, { status: 401 });
+//     }
+//   },
+// };
+
+// api.ts - FIXED VERSION
 import { NextResponse } from "next/server";
 import { ProductCardProps } from "../types/types";
 
-// Fixed base URL handling for both client and server
+// Fix the base URL handling
 export function getBaseUrl() {
-  // In the browser, use relative URLs (empty string means same origin)
-  if (typeof window !== "undefined") return "";
-
-  // For server-side rendering on Vercel
-  if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`;
-
-  // For local development
-  return `http://localhost:${process.env.PORT ?? 3000}`;
+  if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`; // SSR should use vercel url
+  return `http://localhost:${process.env.PORT ?? 3000}`; // dev SSR should use localhost
 }
 
-// For client-side calls, we should use relative URLs
-// For server-side calls (SSR), we need the full URL
-function getApiUrl(endpoint: string) {
-  if (typeof window !== "undefined") {
-    // Client-side: use relative URL
-    return `/api${endpoint}`;
-  } else {
-    // Server-side: use full URL
-    return `${getBaseUrl()}/api${endpoint}`;
-  }
-}
+const API_BASE_URL = `${getBaseUrl()}/api`;
 
 export const api = {
   getProducts: async () => {
-    try {
-      const url = getApiUrl("/product");
-      console.log("Fetching products from:", url);
+    console.log("API_BASE_URL:", API_BASE_URL);
 
-      const res = await fetch(url, {
+    try {
+      const res = await fetch(`${API_BASE_URL}/product`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
         },
       });
-
-      if (!res.ok) {
-        throw new Error(`HTTP error! status: ${res.status}`);
-      }
-
       const data = await res.json();
-      console.log("Fetched products:", data);
+      console.log("fetche products:", data);
+
       return data.products || [];
     } catch (error) {
-      console.error("Error fetching products:", error);
-      return [];
+      console.log("Error fetching products:", error);
+      return error;
     }
   },
-
   getProduct: async (id: string) => {
-    try {
-      const url = getApiUrl(`/product/${id}`);
-      const response = await fetch(url, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+    const response = await fetch(`/api/product/${id}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
 
-      if (!response.ok) {
-        throw new Error(`Failed to fetch product: ${response.status}`);
-      }
-
-      const { product: data } = await response.json();
-      return data;
-    } catch (error) {
-      console.error("Error fetching product:", error);
-      throw error;
+    if (!response.ok) {
+      throw new Error(`Failed to fetch product: ${response.status}`);
     }
-  },
 
+    const { product: data } = await response.json();
+    return data;
+  },
   getUser: async (id: string) => {
     try {
-      const url = getApiUrl(`/user/${id}`);
-      const response = await fetch(url, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error(`Failed to fetch user: ${response.status}`);
-      }
-
+      const response = await fetch(`${API_BASE_URL}/user/${id}`);
       const user = await response.json();
       return user;
     } catch (err) {
-      console.error("Error fetching user:", err);
+      console.log(err);
       return null;
     }
   },
-
   getWishlist: async (userId: string) => {
     try {
-      const url = getApiUrl(`/user/${userId}/wishlist`);
-      const response = await fetch(url, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error(`Failed to fetch wishlist: ${response.status}`);
-      }
-
+      const response = await fetch(`${API_BASE_URL}/user/${userId}/wishlist`);
       const wishlist = await response.json();
       return wishlist;
     } catch (err) {
-      console.error("Error fetching wishlist:", err);
-      if (typeof window !== "undefined") {
-        // Client-side error handling
-        throw err;
-      } else {
-        // Server-side error handling
-        return NextResponse.json(
-          { error: "Failed to fetch wishlist" },
-          { status: 500 }
-        );
-      }
+      return NextResponse.json(err, { status: 500 });
     }
   },
-
   mergeWishlist: async (
     wishlistToAdd: ProductCardProps[],
     userId: string | undefined
   ) => {
     try {
-      const url = getApiUrl(`/user/${userId}/wishlist`);
-      const response = await fetch(url, {
+      const response = await fetch(`${API_BASE_URL}/user/${userId}/wishlist`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -140,59 +160,25 @@ export const api = {
           wishlistToAdd,
         }),
       });
-
-      if (!response.ok) {
-        throw new Error(`Failed to merge wishlist: ${response.status}`);
-      }
-
       return response.json();
     } catch (err) {
-      console.error("Error merging wishlist:", err);
-      if (typeof window !== "undefined") {
-        throw err;
-      } else {
-        return NextResponse.json(
-          { error: "Failed to merge wishlist" },
-          { status: 401 }
-        );
-      }
+      return NextResponse.json(err, { status: 401 });
     }
   },
-
   getCart: async (userId: string) => {
     try {
-      const url = getApiUrl(`/user/${userId}/cart`);
-      const response = await fetch(url, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error(`Failed to fetch cart: ${response.status}`);
-      }
-
+      const response = await fetch(`${API_BASE_URL}/user/${userId}/cart`);
       return response.json();
     } catch (err) {
-      console.error("Error fetching cart:", err);
-      if (typeof window !== "undefined") {
-        throw err;
-      } else {
-        return NextResponse.json(
-          { error: "Failed to fetch cart" },
-          { status: 500 }
-        );
-      }
+      return NextResponse.json(err, { status: 500 });
     }
   },
-
   mergeCart: async (
     cartToAdd: ProductCardProps[],
     userId: string | undefined
   ) => {
     try {
-      const url = getApiUrl(`/user/${userId}/cart`);
-      const response = await fetch(url, {
+      const response = await fetch(`${API_BASE_URL}/user/${userId}/cart`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -201,22 +187,9 @@ export const api = {
           cartToAdd,
         }),
       });
-
-      if (!response.ok) {
-        throw new Error(`Failed to merge cart: ${response.status}`);
-      }
-
       return response.json();
     } catch (err) {
-      console.error("Error merging cart:", err);
-      if (typeof window !== "undefined") {
-        throw err;
-      } else {
-        return NextResponse.json(
-          { error: "Failed to merge cart" },
-          { status: 401 }
-        );
-      }
+      return NextResponse.json(err, { status: 401 });
     }
   },
 };
