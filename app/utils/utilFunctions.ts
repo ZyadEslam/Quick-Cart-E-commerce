@@ -174,8 +174,10 @@ export const syncWishlistOnLogin = async (userId: string) => {
     // Get wishlist from DB
 
     const response = await fetch(`${getBaseUrl()}/api/user/${userId}/wishlist`);
+    
     const dbWishlist = await response.json();
-
+    console.log("dbWishlist: ", dbWishlist);
+    
     // Get wishlist from localStorage
     const localStorageCart = localStorage.getItem("wishlist")
       ? JSON.parse(localStorage.getItem("wishlist") as string)

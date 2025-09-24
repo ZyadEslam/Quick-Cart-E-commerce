@@ -12,6 +12,7 @@ export async function GET(req: NextRequest, { params }: Params) {
 
     if (userFound) {
       const { wishlist } = userFound;
+      log("User Wishlist from DB: ", wishlist);
       return NextResponse.json(wishlist, { status: 200 });
     } else {
       return NextResponse.json({ message: "User Not Found" }, { status: 401 });
