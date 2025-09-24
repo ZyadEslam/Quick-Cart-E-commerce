@@ -161,7 +161,6 @@ export const api = {
           wishlistToAdd,
         }),
       });
-      // ✅ REMOVED localStorage call
       return response.json();
     } catch (err) {
       return NextResponse.json(err, { status: 401 });
@@ -189,7 +188,6 @@ export const api = {
           cartToAdd,
         }),
       });
-      // ✅ REMOVED localStorage call
       return response.json();
     } catch (err) {
       return NextResponse.json(err, { status: 401 });

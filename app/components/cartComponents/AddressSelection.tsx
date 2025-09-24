@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useRef } from "react";
 // import Link from "next/link";
 import { AddressProps } from "@/app/types/types";
+import Link from "next/link";
 
 interface AddressSelectionProps {
   setSelectedAddress: (addrees: AddressProps) => void;
@@ -45,16 +46,16 @@ const AddressSelection = ({
   }, []);
 
   useEffect(() => {
-    // const handleClickOutside = (event: MouseEvent) => {
-    //   if (
-    //     dropdownRef.current &&
-    //     !dropdownRef.current.contains(event.target as Node)
-    //   ) {
-    //     setIsOpen(false);
-    //   }
-    // };
-    // document.addEventListener("mousedown", handleClickOutside);
-    // return () => document.removeEventListener("mousedown", handleClickOutside);
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   const handleAddressSelect = (address: AddressProps) => {
@@ -84,10 +85,9 @@ const AddressSelection = ({
         setAddresses((prev) => prev.filter((addr) => addr._id !== addressId));
 
         // If deleted address was selected, clear selection
-        // if (selectedId === addressId) {
-        //   setSelectedId(undefined);
-        //   onAddressSelect?.(null);
-        // }
+        if (selectedAddress && selectedAddress._id === addressId) {
+          setSelectedAddress({} as AddressProps);
+        }
       } else {
         alert(result.message || "Failed to delete address");
       }
@@ -97,7 +97,37 @@ const AddressSelection = ({
     }
   };
 
-  //   const selectedAddress = addresses.find((addr) => addr._id === selectedId);
+  const handleDropdownToggle = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsOpen(!isOpen);
+  };
+
+  const handleRetry = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    // Re-fetch addresses
+    const fetchAddresses = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const response = await fetch("/api/order-address");
+        const result = await response.json();
+
+        if (result.success) {
+          setAddresses(result.addresses);
+        } else {
+          setError(result.message || "Failed to fetch addresses");
+        }
+      } catch (error) {
+        setError("Failed to fetch addresses");
+        console.error("Error fetching addresses:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchAddresses();
+  };
 
   if (loading) {
     return (
@@ -113,7 +143,8 @@ const AddressSelection = ({
       <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
         <p>{error}</p>
         <button
-          //   onClick={fetchAddresses}
+          type="button"
+          onClick={handleRetry}
           className="mt-2 text-sm underline hover:no-underline"
         >
           Try again
@@ -130,11 +161,12 @@ const AddressSelection = ({
 
       {/* Dropdown Button */}
       <button
-        onClick={() => setIsOpen(!isOpen)}
+        type="button"
+        onClick={handleDropdownToggle}
         className="w-full p-3 border border-gray-300 rounded-lg bg-white text-left flex items-center justify-between hover:border-orange-300 focus:outline-none focus:ring-2 focus:ring-orange focus:border-transparent"
       >
         <div className="flex-1">
-          {selectedAddress ? (
+          {selectedAddress && selectedAddress._id ? (
             <div>
               <div className="font-medium text-gray-900">
                 {selectedAddress.name}
@@ -177,14 +209,13 @@ const AddressSelection = ({
               {addresses.map((address) => (
                 <div key={address._id} className="relative group">
                   <button
+                    type="button"
                     onClick={() => handleAddressSelect(address)}
-                    className={`w-full px-4 py-3 text-left hover:bg-gray-50 transition-colors 
-                        `}
-                    // ${
-                    //   selectedAddress && selectedAddress._id === address._id
-                    //     ? "bg-orange-50 border-l-4 border-orange"
-                    //     : ""
-                    // }
+                    className={`w-full px-4 py-3 text-left hover:bg-gray-50 transition-colors ${
+                      selectedAddress && selectedAddress._id === address._id
+                        ? "bg-orange-50 border-l-4 border-orange"
+                        : ""
+                    }`}
                   >
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
@@ -203,7 +234,7 @@ const AddressSelection = ({
                       </div>
 
                       {/* Delete Button */}
-                      <button
+                      <p
                         onClick={(e) => handleDeleteAddress(address._id, e)}
                         className="opacity-0 group-hover:opacity-100 transition-opacity ml-2 p-1 text-red-500 hover:text-red-700 hover:bg-red-50 rounded"
                         title="Delete address"
@@ -221,7 +252,7 @@ const AddressSelection = ({
                             d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
                           />
                         </svg>
-                      </button>
+                      </p>
                     </div>
                   </button>
                 </div>
@@ -230,7 +261,7 @@ const AddressSelection = ({
           )}
 
           {/* Add New Address Link */}
-          {/* <div className="border-t border-gray-200">
+          <div className="border-t border-gray-200">
             <Link
               href="/shipping-address"
               className="block px-4 py-3 text-orange-600 hover:bg-orange-50 transition-colors"
@@ -253,7 +284,7 @@ const AddressSelection = ({
                 Add New Address
               </div>
             </Link>
-          </div> */}
+          </div>
         </div>
       )}
     </div>

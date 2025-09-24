@@ -5,11 +5,16 @@ import Link from "next/link";
 import { assets } from "@/public/assets/assets";
 import { useState, useEffect } from "react";
 import { AuthButtons, ToggleMenuBtn } from "./";
-import { signOut, useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import { usePathname } from "next/navigation";
 import { Heart, ShoppingCart } from "lucide-react";
 // import { api } from "../utils/api";
-import { syncCartOnLogin, syncWishlistOnLogin } from "../utils/utilFunctions";
+import {
+  handleSignout,
+  syncCartOnLogin,
+  syncWishlistOnLogin,
+} from "../utils/utilFunctions";
+import { Session } from "next-auth";
 
 const UserNav = () => {
   const pathname = usePathname();
@@ -89,7 +94,7 @@ const UserNav = () => {
         if (session?.user) {
           // ------------- If Error Occurs Here, Check This Function -------------
           // utils/utilFunctions.ts -> syncWishlistOnLogin()
-          const mergedWishlist = syncWishlistOnLogin(
+          const mergedWishlist = await syncWishlistOnLogin(
             session?.user?.id as string
           );
           console.log("User DB merged Wishlist: ", mergedWishlist);
@@ -107,13 +112,10 @@ const UserNav = () => {
         localStorage.getItem("cart") &&
         Array.isArray(JSON.parse(localStorage.getItem("cart") as string))
       ) {
-        if (
-          session?.user &&
-          JSON.parse(localStorage.getItem("cart") as string).length === 0
-        ) {
+        if (session?.user) {
           // ------------- If Error Occurs Here, Check This Function -------------
           // utils/utilFunctions.ts -> syncCartOnLogin()
-          const mergedCart = syncCartOnLogin(session?.user?.id as string);
+          const mergedCart = await syncCartOnLogin(session?.user?.id as string);
           console.log("User DB merged Cart: ", mergedCart);
         } else {
           console.log("User not logged in, cannot sync cart");
@@ -181,7 +183,7 @@ const UserNav = () => {
               {session?.user && (
                 <span
                   className="cursor-pointer md:hidden"
-                  onClick={() => signOut()}
+                  onClick={() => handleSignout(session as Session)}
                 >
                   Sign out
                 </span>

@@ -1,4 +1,6 @@
+// models/user.js
 import mongoose from "mongoose";
+
 const userSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -15,19 +17,9 @@ const userSchema = new mongoose.Schema({
   },
   cart: [
     {
-      _id: String,
-      name: String,
-      description: String,
-      rating: Number,
-      price: Number,
-      oldPrice: Number,
-      discount: String,
-      category: String,
-      brand: String,
-      color: String,
-      quantity: Number,
-      quantityInCart: Number,
-      imgSrc: [String],
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Product",
+      default: [],
     },
   ],
   wishlist: [
@@ -37,6 +29,15 @@ const userSchema = new mongoose.Schema({
       default: [],
     },
   ],
+  // Optional: You can also store address references in user
+  addresses: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Address",
+      default: [],
+    },
+  ],
 });
-const User = mongoose.models.User || mongoose.model("User", userSchema); // see if the user is already exist & if not create a new one
+
+const User = mongoose.models.User || mongoose.model("User", userSchema);
 export default User;

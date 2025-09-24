@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { shippingFormAction } from "@/app/utils/actions";
 import { useFormState } from "react-dom";
 import SubmitButton from "./SubmitBtn";
+import { useSession } from "next-auth/react";
 
 const initialState = {
   success: false,
@@ -13,12 +14,23 @@ const initialState = {
 const ShippingFormComponent = () => {
   const [state, formAction] = useFormState(shippingFormAction, initialState);
   const formRef = useRef<HTMLFormElement>(null);
+  const { data: session } = useSession();
 
   useEffect(() => {
     if (state.success) {
       formRef.current?.reset();
     }
   }, [state.success]);
+
+  if (!session) {
+    return (
+      <div className="p-4 bg-yellow-100 border border-yellow-400 rounded-md">
+        <p className="text-yellow-700">
+          Please log in to save your shipping addresses.
+        </p>
+      </div>
+    );
+  }
 
   return (
     <motion.div

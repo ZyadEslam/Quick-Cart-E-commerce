@@ -8,9 +8,7 @@ export async function GET(req: NextRequest, { params }: Params) {
   try {
     await dbConnect();
     const { id } = await params;
-    console.log(id);
     const userFound = await User.findById(id).populate("wishlist");
-    console.log(userFound.wishlist);
 
     if (userFound) {
       const { wishlist } = userFound;

@@ -1,5 +1,12 @@
+// models/address.js
 import mongoose from "mongoose";
+
 const addressSchema = new mongoose.Schema({
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: [true, "User ID is required"],
+  },
   name: {
     type: String,
     required: [true, "User name is required"],
@@ -24,11 +31,15 @@ const addressSchema = new mongoose.Schema({
     type: String,
     required: [true, "State is required"],
   },
+  isDefault: {
+    type: Boolean,
+    default: false,
+  },
   createdAt: {
     type: Date,
     default: Date.now,
   },
 });
-const Address =
-  mongoose.models.Address || mongoose.model("Address", addressSchema); // see if the user is already exist & if not create a new one
+
+const Address = mongoose.models.Address || mongoose.model("Address", addressSchema);
 export default Address;

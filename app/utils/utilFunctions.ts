@@ -1,6 +1,9 @@
 "use client";
 
+import { Session } from "next-auth";
 import { ProductCardProps } from "../types/types";
+import { api, getBaseUrl } from "./api";
+import { signOut } from "next-auth/react";
 
 export const addToWishlistStorage = (
   product: ProductCardProps
@@ -216,5 +219,32 @@ export const syncCartOnLogin = async (userId: string) => {
   } catch (error) {
     console.error("Error syncing cart on login:", error);
     return [];
+  }
+};
+
+export const handleSignout = async (session: Session) => {
+  console.log("🚪 Sign out button clicked");
+  try {
+    // Merge wishlist to DB
+    if (localStorage.getItem("wishlist")) {
+      const wishlist = JSON.parse(localStorage.getItem("wishlist") as string);
+      console.log("wishlist: ", wishlist);
+      const result = await api.mergeWishlist(wishlist, session?.user.id);
+      localStorage.setItem("wishlist", JSON.stringify([])); // Clear local wishlist after merging
+      console.log(result);
+    }
+
+    // Merge cart to DB
+    if (localStorage.getItem("cart")) {
+      const cart = JSON.parse(localStorage.getItem("cart") as string);
+      console.log("cart: ", cart);
+      const result = await api.mergeCart(cart, session?.user.id);
+      localStorage.setItem("cart", JSON.stringify([])); // Clear local cart after merging
+      console.log(result);
+    }
+    console.log("🔄 Redirecting to:", getBaseUrl());
+    await signOut({ callbackUrl: "/" });
+  } catch (error) {
+    console.error("❌ SignOut error:", error);
   }
 };
