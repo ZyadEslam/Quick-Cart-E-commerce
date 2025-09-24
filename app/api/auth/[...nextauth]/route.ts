@@ -10,31 +10,35 @@ console.log("NEXTAUTH_URL:", process.env.NEXTAUTH_URL);
 const createHandler = () => {
   try {
     console.log("✅ Creating NextAuth handler...");
-    
+
     // Validate required environment variables
     const requiredEnvVars = [
-      'GOOGLE_CLIENT_ID',
-      'GOOGLE_CLIENT_SECRET', 
-      'NEXTAUTH_SECRET'
+      "GOOGLE_CLIENT_ID",
+      "GOOGLE_CLIENT_SECRET",
+      "NEXTAUTH_SECRET",
     ];
-    
-    const missingVars = requiredEnvVars.filter(envVar => !process.env[envVar]);
-    
+
+    const missingVars = requiredEnvVars.filter(
+      (envVar) => !process.env[envVar]
+    );
+
     if (missingVars.length > 0) {
-      throw new Error(`Missing required environment variables: ${missingVars.join(', ')}`);
+      throw new Error(
+        `Missing required environment variables: ${missingVars.join(", ")}`
+      );
     }
-    
-    if (process.env.NODE_ENV === 'production' && !process.env.NEXTAUTH_URL) {
+
+    if (process.env.NODE_ENV === "production" && !process.env.NEXTAUTH_URL) {
       console.warn("⚠️ NEXTAUTH_URL not set in production");
     }
-    
+
     const handler = NextAuth(authOptions);
     console.log("✅ NextAuth handler created successfully");
-    
+
     return handler;
   } catch (error) {
     console.error("❌ Failed to create NextAuth handler:", error);
-    
+
     // Return error handler
     return {
       GET: () => {
@@ -64,7 +68,7 @@ const createHandler = () => {
             headers: { "Content-Type": "application/json" },
           }
         );
-      }
+      },
     };
   }
 };
@@ -72,4 +76,3 @@ const createHandler = () => {
 const handler = createHandler();
 
 export { handler as GET, handler as POST };
-  

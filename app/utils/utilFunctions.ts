@@ -141,26 +141,57 @@ export const mergeCartWithDB = (
 
   localStorageCart.forEach((localItem) => {
     if (!localItem || !localItem._id) return; // Skip invalid items
-
-    const existingItem = mergedCart.find(
-      (dbItem) => dbItem._id === localItem._id
-    );
-
-    if (existingItem) {
-      // If item exists in both, use the higher quantity
-      existingItem.quantityInCart = Math.max(
-        existingItem.quantityInCart || 1,
-        localItem.quantityInCart || 1
-      );
-    } else {
-      // If item only exists in localStorage, add it to merged cart
-      mergedCart.push(localItem);
-    }
+    // If item only exists in localStorage, add it to merged cart
+    mergedCart.push(localItem);
   });
 
   return mergedCart;
 };
+export const mergeWishlistWithDB = (
+  localStorageCart: ProductCardProps[],
+  dbWishlist: ProductCardProps[]
+): ProductCardProps[] => {
+  // Handle edge cases
+  if (!Array.isArray(localStorageCart)) localStorageCart = [];
+  if (!Array.isArray(dbWishlist)) dbWishlist = [];
 
+  const mergedWishlist = [...dbWishlist];
+
+  localStorageCart.forEach((localItem) => {
+    if (!localItem || !localItem._id) return; // Skip invalid items
+    // If item only exists in localStorage, add it to merged wishlist
+    mergedWishlist.push(localItem);
+  });
+
+  return mergedWishlist;
+};
+
+export const syncWishlistOnLogin = async (userId: string) => {
+  try {
+    // Get wishlist from DB
+    const response = await fetch(
+      `http://localhost:3000/api/user/${userId}/wishlist`
+    );
+    const dbWishlist = await response.json();
+
+    // Get wishlist from localStorage
+    const localStorageCart = localStorage.getItem("wishlist")
+      ? JSON.parse(localStorage.getItem("wishlist") as string)
+      : [];
+
+    // Merge wishlists
+    const mergedWishlist = mergeWishlistWithDB(localStorageCart, dbWishlist);
+
+    // Update localStorage with merged wishlist
+    localStorage.setItem("wishlist", JSON.stringify(mergedWishlist));
+
+    console.log("wishlist synced on login:", mergedWishlist);
+    return mergedWishlist;
+  } catch (error) {
+    console.error("Error syncing wishlist on login:", error);
+    return [];
+  }
+};
 export const syncCartOnLogin = async (userId: string) => {
   try {
     // Get cart from DB

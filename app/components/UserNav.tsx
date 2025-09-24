@@ -8,7 +8,8 @@ import { AuthButtons, ToggleMenuBtn } from "./";
 import { signOut, useSession } from "next-auth/react";
 import { usePathname } from "next/navigation";
 import { Heart, ShoppingCart } from "lucide-react";
-import { api } from "../utils/api";
+// import { api } from "../utils/api";
+import { syncCartOnLogin, syncWishlistOnLogin } from "../utils/utilFunctions";
 
 const UserNav = () => {
   const pathname = usePathname();
@@ -32,34 +33,90 @@ const UserNav = () => {
 
   useEffect(() => {
     const getListsFromUser = async () => {
-      if (localStorage.getItem("wishlist")) {
-        if (
-          session?.user &&
-          Array.isArray(
-            JSON.parse(localStorage.getItem("wishlist") as string)
-          ) &&
-          JSON.parse(localStorage.getItem("wishlist") as string)?.length === 0
-        ) {
-          const wishlist = await api.getWishlist(session?.user?.id as string);
-          console.log("User DB wishlist: ", wishlist);
+      // if (localStorage.getItem("wishlist")) {
+      //   // Check if user is logged in and wishlist is empty
+      //   if (session?.user) {
+      //     const wishlist = await api.getWishlist(session?.user?.id as string);
+      //     console.log("User DB wishlist: ", wishlist);
 
-          localStorage.setItem("wishlist", JSON.stringify(wishlist));
+      //     if (
+      //       Array.isArray(
+      //         JSON.parse(localStorage.getItem("wishlist") as string)
+      //       )
+      //     ) {
+      //       // If local wishlist is empty, set it to user's wishlist from DB
+      //       if (
+      //         JSON.parse(localStorage.getItem("wishlist") as string).length ===
+      //         0
+      //       ) {
+      //         localStorage.setItem("wishlist", JSON.stringify(wishlist));
+      //       }
+      //       // If local wishlist has items, merge with user's wishlist from DB
+      //       else {
+      //         const mergedWishlist = [
+      //           ...wishlist,
+      //           ...JSON.parse(localStorage.getItem("wishlist") as string),
+      //         ];
+      //         // Remove duplicates based on _id
+      //         const uniqueWishlist = Array.from(
+      //           new Map(mergedWishlist.map((item) => [item._id, item])).values()
+      //         );
+      //         localStorage.setItem("wishlist", JSON.stringify(uniqueWishlist));
+      //         console.log(
+      //           "Hereeeeeeee from UserNav mergedWishlist",
+      //           uniqueWishlist
+      //         );
+      //       }
+      //     } else {
+      //       localStorage.setItem("wishlist", JSON.stringify([]));
+      //     }
+      //   } else {
+      //     // If user is not logged in, ensure wishlist is an empty array
+      //     localStorage.setItem("wishlist", JSON.stringify([]));
+      //   }
+      // } else {
+      //   // If no wishlist in localStorage, initialize it as an empty array
+      //   localStorage.setItem("wishlist", JSON.stringify([]));
+      //   console.log(
+      //     "User DB wishlist: No items in wishlist because some of conditions failed"
+      //   );
+      // }
+
+      if (
+        localStorage.getItem("wishlist") &&
+        Array.isArray(JSON.parse(localStorage.getItem("wishlist") as string))
+      ) {
+        if (session?.user) {
+          // ------------- If Error Occurs Here, Check This Function -------------
+          // utils/utilFunctions.ts -> syncWishlistOnLogin()
+          const mergedWishlist = syncWishlistOnLogin(
+            session?.user?.id as string
+          );
+          console.log("User DB merged Wishlist: ", mergedWishlist);
+        } else {
+          console.log("User not logged in, cannot sync wishlist");
         }
       } else {
         localStorage.setItem("wishlist", JSON.stringify([]));
         console.log(
-          "User DB wishlist: No items in wishlist because some of conditions failed"
+          "User DB Wishlist: No items in wishlist because some of conditions failed"
         );
       }
-      if (localStorage.getItem("cart")) {
+
+      if (
+        localStorage.getItem("cart") &&
+        Array.isArray(JSON.parse(localStorage.getItem("cart") as string))
+      ) {
         if (
           session?.user &&
           JSON.parse(localStorage.getItem("cart") as string).length === 0
         ) {
-          const cart = await api.getCart(session?.user?.id as string);
-          console.log("User DB cart: ", cart);
-
-          localStorage.setItem("cart", JSON.stringify(cart));
+          // ------------- If Error Occurs Here, Check This Function -------------
+          // utils/utilFunctions.ts -> syncCartOnLogin()
+          const mergedCart = syncCartOnLogin(session?.user?.id as string);
+          console.log("User DB merged Cart: ", mergedCart);
+        } else {
+          console.log("User not logged in, cannot sync cart");
         }
       } else {
         localStorage.setItem("cart", JSON.stringify([]));

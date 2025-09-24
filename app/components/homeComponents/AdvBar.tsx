@@ -13,9 +13,6 @@ const AdvBar = () => {
       setIsMobile(window.innerWidth < 768);
     };
 
-    console.log(process.env.VERCEL_URL);
-    console.log(process.env.MONGODB_URI);
-
     // Set mounted state
     setIsMounted(true);
 

@@ -13,18 +13,23 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
-    async jwt({ token, account, user, trigger, session }) {
+    async jwt({
+      token,
+      account,
+      user,
+      // trigger, session
+    }) {
       // Add user id and isAdmin to the token when user signs in
       if (account && user) {
         token.accessToken = account.access_token;
         token.id = user.id; // Add user id to the token
-        token.isAdmin = user.isAdmin; // Add isAdmin flag to the token
+        // token.isAdmin = user.isAdmin; // Add isAdmin flag to the token
       }
 
       // Update isAdmin when session is updated (if needed)
-      if (trigger === "update" && session?.isAdmin !== undefined) {
-        token.isAdmin = session.isAdmin;
-      }
+      // if (trigger === "update" && session?.isAdmin !== undefined) {
+      //   token.isAdmin = session.isAdmin;
+      // }
 
       return token;
     },
@@ -39,10 +44,10 @@ export const authOptions: NextAuthOptions = {
         session.user.id = token.id as string;
       }
 
-      // Add isAdmin to session
-      if (token.isAdmin !== undefined) {
-        session.user.isAdmin = token.isAdmin as boolean;
-      }
+      // // Add isAdmin to session
+      // if (token.isAdmin !== undefined) {
+      //   session.user.isAdmin = token.isAdmin as boolean;
+      // }
 
       return session;
     },

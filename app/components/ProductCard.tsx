@@ -56,20 +56,20 @@ const ProductCard = ({ product }: { product: ProductCardProps }) => {
     }
   };
 
-  const handleImageError = (
+  const handleImageError = () =>
     // e: React.SyntheticEvent<HTMLImageElement, Event>
-  ) => {
-    // console.error("Image failed to load");
-    // console.error("Error event:", e);
-    // console.error("Native event:", e.nativeEvent);
-    // console.error("Target:", e.currentTarget);
+    {
+      // console.error("Image failed to load");
+      // console.error("Error event:", e);
+      // console.error("Native event:", e.nativeEvent);
+      // console.error("Target:", e.currentTarget);
 
-    // Check if the error is due to a 404 or other HTTP error
-    // const target = e.currentTarget as HTMLImageElement;
-    // console.error("Failed image URL:", target.src);
+      // Check if the error is due to a 404 or other HTTP error
+      // const target = e.currentTarget as HTMLImageElement;
+      // console.error("Failed image URL:", target.src);
 
-    setImageError(true);
-  };
+      setImageError(true);
+    };
 
   return (
     <div className="relative md:w-1/6 sm:w-[48%] h-[320px]">

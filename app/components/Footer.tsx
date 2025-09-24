@@ -14,7 +14,7 @@ const Footer = () => {
         <footer className="mt-18">
           <div className="flex justify-between gap-0 text-[14px] sm:gap-8 md:flex-row sm:flex-col px-[8.5%]">
             <div className="md:w-[42%] sm:w-[90%] flex flex-col gap-4">
-              <Image src={assets.logo} alt="logo" width={120} height={120} />
+              <Image src={assets.logo} alt="logo"  />
               <p className="text-gray-500">
                 Lorem Ipsum is simply dummy text of the printing and typesetting
                 industry. Lorem Ipsum has been the industry&apos;s standard
