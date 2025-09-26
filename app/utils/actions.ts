@@ -90,18 +90,13 @@ export const shippingFormAction = async (
       };
     }
 
-    const response = await fetch(
-      `${
-        process.env.NEXTAUTH_URL || "http://localhost:3000"
-      }/api/order-address`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(addressData),
-      }
-    );
+    const response = await fetch(`${getBaseUrl()}/api/order-address`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(addressData),
+    });
 
     const result = await response.json();
 
@@ -143,7 +138,6 @@ export const placeOrderAction = async (formData: FormData) => {
     if (orderData.products.length === 0) {
       return { success: false, message: "No products in the order." };
     }
-    console.log("API_BASE_URL:", getBaseUrl());
     const response = await fetch(`${getBaseUrl()}/api/order`, {
       method: "POST",
       headers: {
