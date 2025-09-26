@@ -59,7 +59,6 @@ export const shippingFormAction = async (
   prevState: { success: boolean; message: string },
   formData: FormData
 ) => {
-
   try {
     const addressData = {
       name: formData.get("name") as string,
@@ -92,7 +91,7 @@ export const shippingFormAction = async (
 
     const response = await fetch(
       `${
-        process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"
+        process.env.NEXTAUTH_URL || "http://localhost:3000"
       }/api/order-address`,
       {
         method: "POST",
@@ -125,7 +124,6 @@ export const shippingFormAction = async (
   }
 };
 
-
 export const placeOrderAction = async (formData: FormData) => {
   const session = await getSession();
   try {
@@ -145,9 +143,7 @@ export const placeOrderAction = async (formData: FormData) => {
       return { success: false, message: "No products in the order." };
     }
     const response = await fetch(
-      `${
-        process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"
-      }/api/order`,
+      `${process.env.NEXTAUTH_URL || "http://localhost:3000"}/api/order`,
       {
         method: "POST",
         headers: {
@@ -155,16 +151,22 @@ export const placeOrderAction = async (formData: FormData) => {
         },
         body: JSON.stringify(orderData),
       }
-    ); 
+    );
     const result = await response.json();
 
     if (result.success) {
       return { success: true, message: "Order placed successfully!" };
     } else {
-      return { success: false, message: result.message || "Failed to place order" };
+      return {
+        success: false,
+        message: result.message || "Failed to place order",
+      };
     }
   } catch (error) {
     console.error("Error placing order:", error);
-    return { success: false, message: "Failed to place order. Please try again." };
+    return {
+      success: false,
+      message: "Failed to place order. Please try again.",
+    };
   }
 };
