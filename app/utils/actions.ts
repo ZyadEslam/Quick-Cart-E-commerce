@@ -143,6 +143,7 @@ export const placeOrderAction = async (formData: FormData) => {
     if (orderData.products.length === 0) {
       return { success: false, message: "No products in the order." };
     }
+    console.log("API_BASE_URL:", getBaseUrl());
     const response = await fetch(`${getBaseUrl()}/api/order`, {
       method: "POST",
       headers: {
