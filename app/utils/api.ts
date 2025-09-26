@@ -38,7 +38,9 @@ export const api = {
     });
 
     if (!response.ok) {
-      throw new NextResponse(`Failed to fetch Products ${response.status}`, { status: 500 });
+      throw new NextResponse(`Failed to fetch Products ${response.status}`, {
+        status: 500,
+      });
     }
 
     const { product: data } = await response.json();
@@ -103,6 +105,20 @@ export const api = {
         body: JSON.stringify({
           cartToAdd,
         }),
+      });
+      return response.json();
+    } catch (err) {
+      return NextResponse.json(err, { status: 401 });
+    }
+  },
+  clearCart: async (userId: string | undefined) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/user/${userId}/cart`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ cartToAdd: [] }),
       });
       return response.json();
     } catch (err) {

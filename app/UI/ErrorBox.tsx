@@ -2,12 +2,13 @@ import React from "react";
 
 interface errorProps {
   errorMessage: string;
-  tryAgainHandler(e?:React.MouseEvent): void;
+  tryAgainHandler?(e?:React.MouseEvent): void;
 }
 const ErrorBox = ({ errorMessage, tryAgainHandler }: errorProps) => {
   return (
     <div className="bg-gray-100 border border-orange-400  px-4 py-3 rounded">
       <p>{errorMessage}</p>
+      {tryAgainHandler && (
       <button
         type="button"
         onClick={tryAgainHandler}
@@ -15,6 +16,8 @@ const ErrorBox = ({ errorMessage, tryAgainHandler }: errorProps) => {
       >
         Try Again
       </button>
+      ) 
+      }
     </div>
   );
 };

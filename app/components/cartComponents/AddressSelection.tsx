@@ -3,6 +3,7 @@ import React, { useState, useEffect, useRef, lazy, Suspense } from "react";
 import { AddressProps } from "@/app/types/types";
 import LoadingSpinner from "@/app/UI/LoadingSpinner";
 import { api } from "@/app/utils/api";
+import { useSession } from "next-auth/react";
 const ErrorBox = lazy(() => import("@/app/UI/ErrorBox"));
 const DropdownBtn = lazy(() => import("./DropdownBtn"));
 const DropdownMenu = lazy(() => import("./DropdownMenu"));
@@ -22,7 +23,7 @@ const AddressSelection = ({
   const [addresses, setAddresses] = useState<AddressProps[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
+  const session = useSession();
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -42,7 +43,12 @@ const AddressSelection = ({
         setLoading(false);
       }
     };
-    fetchAddresses();
+    if (session.status === "authenticated") {
+      fetchAddresses();
+    } else {
+      setLoading(false);
+      setError("Please login to select address");
+    }
   }, []);
 
   useEffect(() => {
@@ -143,10 +149,14 @@ const AddressSelection = ({
     console.log(error);
     return (
       <Suspense>
-        <ErrorBox
-          errorMessage="Failed To Fetch Addresses please Wait and try again"
-          tryAgainHandler={handleRetry}
-        />
+        {session.status === "unauthenticated" ? (
+          <ErrorBox errorMessage={error} />
+        ) : (
+          <ErrorBox
+            errorMessage="Failed to load addresses, please try again."
+            tryAgainHandler={handleRetry}
+          />
+        )}
       </Suspense>
     );
   }

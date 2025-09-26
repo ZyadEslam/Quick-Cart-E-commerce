@@ -64,8 +64,6 @@ const UserNav = () => {
         Array.isArray(JSON.parse(localStorage.getItem("cart") as string))
       ) {
         if (session?.user) {
-          // ------------- If Error Occurs Here, Check This Function -------------
-          // utils/utilFunctions.ts -> syncCartOnLogin()
           const mergedCart = await syncCartOnLogin(session?.user?.id as string);
           console.log("User DB merged Cart: ", mergedCart);
         } else {

@@ -3,8 +3,11 @@ import React, { useRef, useEffect } from "react";
 import { motion } from "framer-motion";
 import { shippingFormAction } from "@/app/utils/actions";
 import { useFormState } from "react-dom";
+import Link from "next/link";
 import SubmitButton from "./SubmitBtn";
 import { useSession } from "next-auth/react";
+import ActionNotification from "@/app/UI/ActionNotification";
+import { ArrowLeft } from "lucide-react";
 
 const initialState = {
   success: false,
@@ -43,16 +46,14 @@ const ShippingFormComponent = () => {
         action={formAction}
         className="space-y-5 md:w-[80%] sm:mb-5 md:mb-0"
       >
-        {state.message && (
-          <div
-            className={`mb-4 p-3  ${
-              state.success
-                ? "bg-green-100 text-green-700 border border-green-200"
-                : "bg-red-100 text-red-700 border border-red-200"
-            }`}
+        <ActionNotification {...state} />
+        {state.success && (
+          <Link
+            href="/cart"
+            className="flex items-center text-orange mb-4 gap-2 hover:text-orange-500"
           >
-            {state.message}
-          </div>
+            <ArrowLeft /> Back To Cart
+          </Link>
         )}
         <div>
           <label htmlFor="name" className="address-form-label">
