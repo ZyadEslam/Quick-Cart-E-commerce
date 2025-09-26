@@ -1,4 +1,5 @@
 import { getSession } from "next-auth/react";
+import { getBaseUrl } from "./api";
 
 export const addProduct = async (formData: FormData) => {
   try {
@@ -142,16 +143,13 @@ export const placeOrderAction = async (formData: FormData) => {
     if (orderData.products.length === 0) {
       return { success: false, message: "No products in the order." };
     }
-    const response = await fetch(
-      `${process.env.NEXTAUTH_URL || "http://localhost:3000"}/api/order`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(orderData),
-      }
-    );
+    const response = await fetch(`${getBaseUrl()}/api/order`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(orderData),
+    });
     const result = await response.json();
 
     if (result.success) {
