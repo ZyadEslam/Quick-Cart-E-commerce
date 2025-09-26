@@ -2,6 +2,7 @@
 import React, { useEffect, useState, useMemo } from "react";
 import { AddressProps, ProductCardProps } from "../../types/types";
 import AddressSelection from "./AddressSelection";
+import { placeOrderAction } from "@/app/utils/actions";
 
 const OrderSummary = ({ cart }: { cart: ProductCardProps[] }) => {
   const [taxes, setTaxes] = useState(0);
@@ -25,11 +26,26 @@ const OrderSummary = ({ cart }: { cart: ProductCardProps[] }) => {
     setTaxes((calculatedTotal * 2) / 100);
   }, [calculatedTotal]);
 
+  const submitHandler = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget as HTMLFormElement);
+    formData.append("addressId", selectedAddress?._id || "");
+    formData.append("totalPrice", (calculatedTotal + taxes).toString());
+    formData.append("products", JSON.stringify(cart));
+    const result = await placeOrderAction(formData);
+    if (result.success) {
+      alert("Order placed successfully!");
+      // Optionally, you can redirect the user or clear the cart here
+    } else {
+      alert(`Error: ${result.message}`);
+    }
+  };
+
   return (
     <section className="bg-gray-50 p-4 ">
       <h1 className="text-2xl font-medium pb-4 ">OrderSummary</h1>
       <hr className="text-gray-300 mb-4" />
-      <form action={""} className="flex flex-col gap-4">
+      <form onSubmit={submitHandler} className="flex flex-col gap-4">
         <div className="order-summary-pair">
           <label className="font-medium text-gray-600">SELECT ADDRESS</label>
           <AddressSelection
@@ -70,7 +86,7 @@ const OrderSummary = ({ cart }: { cart: ProductCardProps[] }) => {
         <input
           type="submit"
           value="Place Order"
-          className="bg-orange py-3 text-white"
+          className="bg-orange py-3 text-white cursor-pointer hover:bg-orange/90 "
         />
       </form>
     </section>

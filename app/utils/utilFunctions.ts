@@ -152,10 +152,10 @@ export const mergeCartWithDB = (
     if (!existingItem) {
       mergedCart.push(localItem);
     }
-    // If you want to handle quantity merging for cart items, you could do:
-    // else if (localItem.quantity && existingItem.quantity) {
-    //   existingItem.quantity += localItem.quantity;
-    // }
+    ////////////////////////////////// To Do ////////////////////////////////////////
+          // The dashboard does not appear in the mobile's menue
+          // The Add Address form does not work correctly 
+    ////////////////////////////////////////////////////////////////////////////////
   });
 
   return mergedCart;

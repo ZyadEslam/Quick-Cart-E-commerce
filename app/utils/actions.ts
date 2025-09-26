@@ -1,3 +1,5 @@
+import { getSession } from "next-auth/react";
+
 export const addProduct = async (formData: FormData) => {
   try {
     const image1: File = formData.get("image1") as File;
@@ -120,5 +122,49 @@ export const shippingFormAction = async (
       success: false,
       message: "Failed to create address. Please try again.",
     };
+  }
+};
+
+
+export const placeOrderAction = async (formData: FormData) => {
+  const session = await getSession();
+  try {
+    const orderData = {
+      addressId: formData.get("addressId") as string,
+      userId: session?.user.id as string,
+      products: JSON.parse(formData.get("products") as string),
+      totalPrice: Number(formData.get("totalPrice")),
+    };
+    if (!orderData.addressId) {
+      return { success: false, message: "Please select a shipping address." };
+    }
+    if (!orderData.userId) {
+      return { success: false, message: "User not authenticated." };
+    }
+    if (orderData.products.length === 0) {
+      return { success: false, message: "No products in the order." };
+    }
+    const response = await fetch(
+      `${
+        process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"
+      }/api/order`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(orderData),
+      }
+    ); 
+    const result = await response.json();
+
+    if (result.success) {
+      return { success: true, message: "Order placed successfully!" };
+    } else {
+      return { success: false, message: result.message || "Failed to place order" };
+    }
+  } catch (error) {
+    console.error("Error placing order:", error);
+    return { success: false, message: "Failed to place order. Please try again." };
   }
 };

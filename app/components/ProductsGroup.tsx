@@ -4,6 +4,7 @@ import ProductCard from "./ProductCard";
 import { ProductCardProps } from "../types/types";
 import { api } from "../utils/api";
 import LoadingSpinner from "../UI/LoadingSpinner";
+import ErrorBox from "../UI/ErrorBox";
 
 const ProductsGroup = ({
   numOfProducts,
@@ -60,18 +61,12 @@ const ProductsGroup = ({
   }
 
   if (error) {
+    console.log(error);
     return (
-      <section className={`${customClassName}`}>
-        <div className="text-center py-8">
-          <p className="text-red-600 mb-4">Error loading products: {error}</p>
-          <button
-            onClick={fetchProducts}
-            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-          >
-            Try Again
-          </button>
-        </div>
-      </section>
+      <ErrorBox
+        errorMessage="Error loading products: Please Wait and try again"
+        tryAgainHandler={fetchProducts}
+      />
     );
   }
 
