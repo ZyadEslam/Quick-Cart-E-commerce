@@ -3,14 +3,16 @@ import React, { useCallback, useState, useEffect } from "react";
 import { TableRowProps } from "../../types/types";
 import Image from "next/image";
 import Link from "next/link";
+import { useCart } from "@/app/hooks/useCart";
 
-const CartTableRow = ({
-  product,
-  removeFromCartHandler,
-  updateQuantityInCart,
-}: TableRowProps) => {
+const CartTableRow = ({ product }: TableRowProps) => {
   const [productPrice, setProductPrice] = useState(product.price);
   const [quantity, setQuantity] = useState(product.quantityInCart || 1);
+  const { removeFromCart, updateQuantity } = useCart();
+
+  // const removeFromCartHandler = (productId: string) => {
+  //   removeFromCart(productId);
+  // };
 
   useEffect(() => {
     const newPrice = product.price * quantity;
@@ -23,11 +25,11 @@ const CartTableRow = ({
 
       setQuantity(newQuantity);
 
-      if (updateQuantityInCart) {
-        updateQuantityInCart(product._id as string, newQuantity);
+      if (updateQuantity) {
+        updateQuantity(product._id as string, newQuantity);
       }
     },
-    [product._id, updateQuantityInCart]
+    [product._id, updateQuantity]
   );
 
   return (
@@ -35,12 +37,12 @@ const CartTableRow = ({
       <td className="flex sm:flex-col md:flex-row">
         <div className="p-4 bg-gray-200 rounded md:mr-4 sm:mb-2 md:mb-0 w-fit">
           <Link href={`/product/${product._id}`}>
-          <Image
-            src={`/api/product/image/${product._id}?index=0`}
-            width={52}
-            height={52}
-            alt="Product Image"
-          />
+            <Image
+              src={`/api/product/image/${product._id}?index=0`}
+              width={52}
+              height={52}
+              alt="Product Image"
+            />
           </Link>
         </div>
         <div className="flex flex-col justify-center">
@@ -48,7 +50,7 @@ const CartTableRow = ({
           <p
             className="text-orange/80 text-sm cursor-pointer hover:opacity-85"
             onClick={() => {
-              removeFromCartHandler(product._id as string);
+              removeFromCart(product._id as string);
             }}
           >
             Remove from Cart

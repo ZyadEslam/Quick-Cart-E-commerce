@@ -8,13 +8,8 @@ import { AuthButtons, ToggleMenuBtn } from "./";
 import { useSession } from "next-auth/react";
 import { usePathname } from "next/navigation";
 import { Heart, ShoppingCart } from "lucide-react";
-// import { api } from "../utils/api";
-import {
-  handleSignout,
-  syncCartOnLogin,
-  syncWishlistOnLogin,
-} from "../utils/utilFunctions";
-import { Session } from "next-auth";
+
+
 
 const UserNav = () => {
   const pathname = usePathname();
@@ -34,50 +29,6 @@ const UserNav = () => {
 
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
-  useEffect(() => {
-    const getListsFromUser = async () => {
-      if (
-        localStorage.getItem("wishlist") &&
-        Array.isArray(JSON.parse(localStorage.getItem("wishlist") as string))
-      ) {
-        if (session?.user) {
-          // ------------- If Error Occurs Here, Check This Function -------------
-          // utils/utilFunctions.ts -> syncWishlistOnLogin()
-          const mergedWishlist = await syncWishlistOnLogin(
-            session?.user?.id as string
-          );
-          console.log("User DB merged Wishlist: ", mergedWishlist);
-        } else {
-          console.log("User not logged in, cannot sync wishlist");
-        }
-      } else {
-        localStorage.setItem("wishlist", JSON.stringify([]));
-        console.log(
-          "User DB Wishlist: No items in wishlist because some of conditions failed"
-        );
-      }
-
-      if (
-        localStorage.getItem("cart") &&
-        Array.isArray(JSON.parse(localStorage.getItem("cart") as string))
-      ) {
-        if (session?.user) {
-          const mergedCart = await syncCartOnLogin(session?.user?.id as string);
-          console.log("User DB merged Cart: ", mergedCart);
-        } else {
-          console.log("User not logged in, cannot sync cart");
-        }
-      } else {
-        localStorage.setItem("cart", JSON.stringify([]));
-        console.log(
-          "User DB Cart: No items in cart because some of conditions failed"
-        );
-      }
-    };
-
-    getListsFromUser();
   }, []);
 
   return (
@@ -129,14 +80,7 @@ const UserNav = () => {
               >
                 Contact
               </Link>
-              {session?.user && (
-                <span
-                  className="cursor-pointer md:hidden"
-                  onClick={() => handleSignout(session as Session)}
-                >
-                  Sign out
-                </span>
-              )}
+              {session?.user && <AuthButtons screen="mobile" />}
               {session?.user.isAdmin && (
                 <Link
                   href="/dashboard"
@@ -156,7 +100,7 @@ const UserNav = () => {
             </ul>
           </div>
 
-          <AuthButtons />
+          <AuthButtons screen="desktop" />
         </>
       ) : (
         <Link

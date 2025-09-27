@@ -1,60 +1,57 @@
 "use client";
-import { useDispatch } from "react-redux";
-import React, { useEffect, useCallback, useState } from "react";
+// import { useDispatch } from "react-redux";
+import React, {
+  // useEffect,
+  // useState ,
+  // useCallback,
+} from "react";
 import CartTableRow from "./CartTableRow";
 import { ProductCardProps } from "@/app/types/types";
-import { calculateTotals } from "@/app/store/cartSlice";
+// import { calculateTotals } from "@/app/store/cartSlice";
+import { useCart } from "@/app/hooks/useCart";
 
-interface cartTableProps {
-  cart: ProductCardProps[];
-  setCart: React.Dispatch<React.SetStateAction<ProductCardProps[]>>;
-}
+// interface cartTableProps {
+//   cart: ProductCardProps[];
+//   setCart: React.Dispatch<React.SetStateAction<ProductCardProps[]>>;
+// }
 
-const CartTable = ({ cart, setCart }: cartTableProps) => {
-  const dispatch = useDispatch();
-  const [isItemRemoved, setIsIsItemRemoved] = useState(false);
+const CartTable = () => {
+  const { cart } = useCart();
+  // const dispatch = useDispatch();
+  // const [isItemRemoved, setIsIsItemRemoved] = useState(false);
 
-  useEffect(() => {
-    if (localStorage.getItem("cart")) {
-      const storageCart = JSON.parse(localStorage.getItem("cart") as string);
-      setCart(storageCart);
+  // useEffect(() => {
+  //   if (localStorage.getItem("cart")) {
+  //     const storageCart = JSON.parse(localStorage.getItem("cart") as string);
+  //     setCart(storageCart);
 
-      const total = storageCart.reduce(
-        (acc: number, item: ProductCardProps) =>
-          acc + item.price * (item.quantityInCart || 1),
-        0
-      );
+  //     const total = storageCart.reduce(
+  //       (acc: number, item: ProductCardProps) =>
+  //         acc + item.price * (item.quantityInCart || 1),
+  //       0
+  //     );
 
-      dispatch(calculateTotals(total));
-    }
-  }, [dispatch, setCart, isItemRemoved]);
+  //     dispatch(calculateTotals(total));
+  //   }
+  // }, [dispatch, setCart, isItemRemoved]);
 
-  const removeFromCartHandler = useCallback(
-    (productId: string) => {
-      const filteredCart = cart.filter(
-        (product: ProductCardProps) => product._id !== productId
-      );
-      localStorage.setItem("cart", JSON.stringify(filteredCart));
-      setCart(filteredCart);
-      setIsIsItemRemoved((state) => !state);
-    },
-    [cart, setCart]
-  );
+  // const removeFromCartHandler = (productId: string) => {
+  //   removeFromCart(productId);
+  //   // setIsIsItemRemoved((state) => !state);
+  // };
 
-  const updateQuantityInCart = useCallback(
-    (productId: string, quantity: number) => {
-      const updatedCart = cart.map((product: ProductCardProps) => {
-        if (product._id === productId) {
-          return { ...product, quantityInCart: quantity };
-        }
-        return product;
-      });
+  // const updateQuantityInCart = (productId: string, quantity: number) => {
+  //   updateQuantity(productId, quantity);
+  //   // const updatedCart = cart.map((product: ProductCardProps) => {
+  //   //   if (product._id === productId) {
+  //   //     return { ...product, quantityInCart: quantity };
+  //   //   }
+  //   //   return product;
+  //   // });
 
-      localStorage.setItem("cart", JSON.stringify(updatedCart));
-      setCart(updatedCart);
-    },
-    [cart, setCart]
-  );
+  //   // localStorage.setItem("cart", JSON.stringify(updatedCart));
+  //   // setCart(updatedCart);
+  // };
 
   return (
     <table className="w-full flex flex-col sm:px-2 md:px-0 ">
@@ -70,8 +67,8 @@ const CartTable = ({ cart, setCart }: cartTableProps) => {
           <CartTableRow
             key={product._id}
             product={product}
-            removeFromCartHandler={removeFromCartHandler}
-            updateQuantityInCart={updateQuantityInCart}
+            // removeFromCartHandler={removeFromCartHandler}
+            // updateQuantityInCart={updateQuantityInCart}
           />
         ))}
       </tbody>

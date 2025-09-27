@@ -1,16 +1,19 @@
 import type { Metadata } from "next";
-import { Outfit } from "next/font/google";
+// import { Outfit } from "next/font/google";
+import localFont from "next/font/local";
+
 import "./style/globals.css";
-import Provider from "./components/Provider";
+import AuthProvider from "./components/providers/AuthProvider";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "../lib/auth";
-import StoreProvider from "./components/StoreProvider";
 import { Footer, UserNav } from "./components";
+import CtxProviders from "./components/providers/CtxProvider";
 
-const outfit = Outfit({
+const outfit = localFont({
+  src: "../fonts/Outfit-VariableFont_wght.ttf",
   variable: "--font-outfit400",
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
+  display: "swap",
+  weight: "100 900",
 });
 
 export const metadata: Metadata = {
@@ -27,23 +30,17 @@ export default async function RootLayout({
 
   return (
     <html lang="en">
-      <head>
-        <link
-          href="https://cdn.boxicons.com/fonts/basic/boxicons.min.css"
-          rel="stylesheet"
-        />
-      </head>
       <body
         className={`${outfit.variable} antialiased`}
         suppressHydrationWarning
       >
-        <Provider session={session}>
-          <StoreProvider>
+        <AuthProvider session={session}>
+          <CtxProviders>
             <UserNav />
             <main>{children}</main>
             <Footer />
-          </StoreProvider>
-        </Provider>
+          </CtxProviders>
+        </AuthProvider>
       </body>
     </html>
   );

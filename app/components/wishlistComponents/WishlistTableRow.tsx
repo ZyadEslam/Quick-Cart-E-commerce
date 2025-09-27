@@ -3,26 +3,28 @@ import { ProductCardProps } from "../../types/types";
 import Link from "next/link";
 import Image from "next/image";
 import Toast from "../../UI/Toast";
-import {
-  addToCartStorage,
-  isInCartStorage,
-  removeFromWishlistStorage,
-} from "@/app/utils/utilFunctions";
-
+// import {
+//   addToCartStorage,
+//   isInCartStorage,
+//   removeFromWishlistStorage,
+// } from "@/app/utils/utilFunctions";
+import { useWishlist } from "@/app/hooks/useWishlist";
+import { useCart } from "@/app/hooks/useCart";
 interface WishlistTableProps {
   product: ProductCardProps;
-  setWishlist(wishlist: ProductCardProps[]): void;
+  // setWishlist(wishlist: ProductCardProps[]): void;
 }
 
-const WishlistTableRow = ({ product, setWishlist }: WishlistTableProps) => {
+const WishlistTableRow = ({ product }: WishlistTableProps) => {
   const [showToast, setShowToast] = useState({ show: false, message: "" });
-  const [isInCart, setIsInCart] = useState(false);
-
+  const [InCart, setInCart] = useState(false);
+  const { removeFromWishlist } = useWishlist();
+  const { isInCart, addToCart } = useCart();
   useEffect(() => {
-    if (isInCartStorage(product._id as string)) {
-      setIsInCart(true);
+    if (isInCart(product._id as string)) {
+      setInCart(true);
     } else {
-      setIsInCart(false);
+      setInCart(false);
     }
   }, [product._id]);
 
@@ -40,24 +42,21 @@ const WishlistTableRow = ({ product, setWishlist }: WishlistTableProps) => {
     }, 3000);
   };
 
-  const removeFromWishlistHandler = (product: ProductCardProps) => {
-    const filteredWishlist = removeFromWishlistStorage(product._id as string);
-    if (typeof filteredWishlist !== "string") {
-      setWishlist(filteredWishlist as ProductCardProps[]);
-      handleShowToast(true, "Removed from wishlist");
-    } else {
-      handleShowToast(true, "Item is not in the wishlist");
-    }
-  };
+  // const removeFromWishlistHandler = (product: ProductCardProps) => {
+  //   const filteredWishlist = removeFromWishlistStorage(product._id as string);
+  //   if (typeof filteredWishlist !== "string") {
+  //     setWishlist(filteredWishlist as ProductCardProps[]);
+  //     handleShowToast(true, "Removed from wishlist");
+  //   } else {
+  //     handleShowToast(true, "Item is not in the wishlist");
+  //   }
+  // };
 
   const addToCartHandler = (product: ProductCardProps) => {
-    const cart = addToCartStorage(product, 1);
-    if (typeof cart !== "string") {
-      handleShowToast(true, "Added To Cart");
-      setIsInCart(true);
-    } else {
-      handleShowToast(true, "The item is already in the cart");
-    }
+    addToCart(product);
+    handleShowToast(true, "Added To Cart");
+    removeFromWishlist(product._id as string);
+    setInCart(true);
   };
   return (
     <tr key={product._id} className="table-row">
@@ -77,7 +76,7 @@ const WishlistTableRow = ({ product, setWishlist }: WishlistTableProps) => {
           <p
             className="text-orange/80 text-sm cursor-pointer hover:opacity-85"
             onClick={() => {
-              removeFromWishlistHandler(product as ProductCardProps);
+              removeFromWishlist(product._id as string);
             }}
           >
             Remove from Wishlist
@@ -99,11 +98,11 @@ const WishlistTableRow = ({ product, setWishlist }: WishlistTableProps) => {
           onClick={() => {
             addToCartHandler(product);
           }}
-          disabled={isInCart}
+          disabled={InCart}
         >
-          {isInCart ? "Item In Cart" : "Add To Cart"}
+          {InCart ? "Item In Cart" : "Add To Cart"}
         </button>
-        {isInCart && (
+        {InCart && (
           <Link
             href={"/cart"}
             className="text-orange/80 text-sm hover:opacity-85"

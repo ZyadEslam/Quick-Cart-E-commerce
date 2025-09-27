@@ -5,22 +5,23 @@ import { assets } from "@/public/assets/assets";
 import Link from "next/link";
 import Toast from "../UI/Toast";
 import { Heart } from "lucide-react";
-import {
-  addToWishlistStorage,
-  isInWishlistStorage,
-  removeFromWishlistStorage,
-} from "../utils/utilFunctions";
+// import {
+//   addToWishlistStorage,
+//   isInWishlistStorage,
+//   removeFromWishlistStorage,
+// } from "../utils/utilFunctions";
 import { ProductCardProps } from "../types/types";
+import { useWishlist } from "../hooks/useWishlist";
 
 const ProductCard = ({ product }: { product: ProductCardProps }) => {
-  const [isInWishlist, setIsInWishlist] = useState(false);
+  const [inWishlist, setInWishlist] = useState(false);
   const [imageError, setImageError] = useState(false);
   const [imageSrc, setImageSrc] = useState("");
+  const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
 
   useEffect(() => {
-    setIsInWishlist(isInWishlistStorage(product._id as string));
+    setInWishlist(isInWishlist(product._id as string));
 
-    // Set image source with proper API URL
     if (product._id) {
       setImageSrc(`/api/product/image/${product._id}?index=0`);
     }
@@ -45,31 +46,21 @@ const ProductCard = ({ product }: { product: ProductCardProps }) => {
     e.preventDefault(); // Prevent navigation when clicking heart
     e.stopPropagation();
 
-    if (!isInWishlist) {
-      addToWishlistStorage(product);
+    if (!inWishlist) {
+      addToWishlist(product);
       handleShowToast(true, "Added To wishlist");
-      setIsInWishlist(true);
+      setInWishlist(true);
     } else {
-      removeFromWishlistStorage(product._id as string);
+      removeFromWishlist(product._id as string);
       handleShowToast(true, "Removed from wishlist");
-      setIsInWishlist(false);
+      setInWishlist(false);
     }
   };
 
-  const handleImageError = () =>
-    // e: React.SyntheticEvent<HTMLImageElement, Event>
-    {
-      // console.error("Image failed to load");
-      // console.error("Error event:", e);
-      // console.error("Native event:", e.nativeEvent);
-      // console.error("Target:", e.currentTarget);
-
-      // Check if the error is due to a 404 or other HTTP error
-      // const target = e.currentTarget as HTMLImageElement;
-      // console.error("Failed image URL:", target.src);
-
-      setImageError(true);
-    };
+  const handleImageError = () => {
+    console.error("Image failed to load");
+    setImageError(true);
+  };
 
   return (
     <div className="relative md:w-1/6 sm:w-[48%] h-[320px]">
@@ -79,9 +70,9 @@ const ProductCard = ({ product }: { product: ProductCardProps }) => {
       >
         <Heart
           className={`w-4 h-4 ${
-            isInWishlist ? " text-orange " : "text-gray-500"
+            inWishlist ? " text-orange " : "text-gray-500"
           } hover:text-orange`}
-          fill={isInWishlist ? "#ff7d1a" : "none"}
+          fill={inWishlist ? "#ff7d1a" : "none"}
         />
       </div>
       {showToast.show && (

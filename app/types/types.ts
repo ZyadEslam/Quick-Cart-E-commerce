@@ -18,8 +18,6 @@ export interface ProductCardProps {
 
 export interface TableRowProps {
   product: ProductCardProps;
-  removeFromCartHandler(product: string): void;
-  updateQuantityInCart?(productId: string, quantity: number): void;
 }
 
 export interface AddressProps {

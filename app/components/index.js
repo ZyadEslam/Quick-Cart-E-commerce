@@ -4,7 +4,7 @@ export const ProductsGroup = lazy(() => import("./ProductsGroup"));
 export { default as ProductCard } from "./ProductCard";
 export { default as Footer } from "./Footer";
 export { default as AuthButtons } from "./AuthButton";
-export { default as Provider } from "./Provider";
+export { default as Provider } from "./providers/AuthProvider";
 export { default as ToggleMenuBtn } from "./ToggleMenuBtn";
 export { default as UserNav } from "./UserNav";
 export { default as DashboardSideNav } from "./dashboardComponents/DashboardSideNav";
