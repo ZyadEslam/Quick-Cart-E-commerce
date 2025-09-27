@@ -15,7 +15,7 @@ const LoadingOverlay = ({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       {/* Blurred backdrop */}
-      <div className="absolute inset-0  backdrop-blur" />
+      <div className="absolute inset-0  backdrop-blur-sm" />
 
       {/* Content */}
       <div className="relative z-10 flex flex-col items-center justify-center p-8 bg-white bg-opacity-90 backdrop-blur-md rounded-2xl shadow-2xl border border-white border-opacity-30">
