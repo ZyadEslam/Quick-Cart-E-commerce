@@ -1,6 +1,8 @@
+// app/api/user/[id]/wishlist/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import dbConnect from "@/lib/mongoose";
 import User from "../../../../models/user";
+// import Product from "../../../../models/product"; // Explicitly import to ensure registration
 
 interface Params {
   params: Promise<{ id: string }>;
@@ -8,13 +10,33 @@ interface Params {
 
 export async function GET(req: NextRequest, { params }: Params) {
   try {
+    console.log("Starting wishlist GET request");
     await dbConnect();
+    console.log("Database connected");
+
     const { id } = await params;
+    console.log("User ID:", id);
+
+    // Validate ObjectId format
+    if (!id || !id.match(/^[0-9a-fA-F]{24}$/)) {
+      return NextResponse.json(
+        { message: "Invalid user ID format", wishlist: [] },
+        { status: 400 }
+      );
+    }
+
     const userFound = await User.findById(id).populate("wishlist");
+    console.log("User found:", !!userFound);
 
     if (userFound) {
       const { wishlist } = userFound;
-      return NextResponse.json({ wishlist: wishlist || [] }, { status: 200 });
+      console.log("Wishlist length:", wishlist?.length || 0);
+      return NextResponse.json(
+        {
+          wishlist: Array.isArray(wishlist) ? wishlist : [],
+        },
+        { status: 200 }
+      );
     } else {
       return NextResponse.json(
         { message: "User Not Found", wishlist: [] },
@@ -36,11 +58,32 @@ export async function GET(req: NextRequest, { params }: Params) {
 
 export async function POST(req: NextRequest, { params }: Params) {
   try {
+    console.log("Starting wishlist POST request");
     await dbConnect();
+
     const { id } = await params;
-    const { wishlistToAdd } = await req.json();
+
+    // Validate ObjectId format
+    if (!id || !id.match(/^[0-9a-fA-F]{24}$/)) {
+      return NextResponse.json(
+        { message: "Invalid user ID format" },
+        { status: 400 }
+      );
+    }
+
+    const body = await req.json();
+    const { wishlistToAdd } = body;
+
     console.log("newWishlist: ", wishlistToAdd);
     console.log("userId: ", id);
+
+    // Ensure wishlistToAdd is an array
+    if (!Array.isArray(wishlistToAdd)) {
+      return NextResponse.json(
+        { message: "Wishlist must be an array" },
+        { status: 400 }
+      );
+    }
 
     const loggedUser = await User.findOne({ _id: id });
 
