@@ -1,7 +1,6 @@
 "use client";
 import { useState, useMemo, useEffect } from "react";
 import { ProductCardProps } from "@/app/types/types";
-import { useSession } from "next-auth/react";
 import { api } from "@/app/utils/api";
 import { ProductsContext } from "@/app/context/productsCtx";
 
@@ -10,15 +9,13 @@ interface ProductsProviderProps {
 }
 
 const ProductsProvider = ({ children }: ProductsProviderProps) => {
-  const { data: session } = useSession();
   const [products, setProducts] = useState<ProductCardProps[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Migrate anonymous wishlist to user wishlist when user logs in
   useEffect(() => {
     const getProductsFromServer = async () => {
-      if (session?.user?.id && typeof window !== "undefined") {
+      if (typeof window !== "undefined") {
         try {
           setIsLoading(true);
           const serverProducts = await api.getProducts();

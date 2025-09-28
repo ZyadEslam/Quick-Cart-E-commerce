@@ -1,8 +1,6 @@
-// app/api/user/[id]/wishlist/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import dbConnect from "@/lib/mongoose";
 import User from "../../../../models/user";
-// import Product from "../../../../models/product"; // Explicitly import to ensure registration
 
 interface Params {
   params: Promise<{ id: string }>;
@@ -17,7 +15,6 @@ export async function GET(req: NextRequest, { params }: Params) {
     const { id } = await params;
     console.log("User ID:", id);
 
-    // Validate ObjectId format
     if (!id || !id.match(/^[0-9a-fA-F]{24}$/)) {
       return NextResponse.json(
         { message: "Invalid user ID format", wishlist: [] },

@@ -61,7 +61,7 @@ const ProductCard = ({ product }: { product: ProductCardProps }) => {
   return (
     <div className="relative md:w-1/6 sm:w-[48%] h-[320px]">
       <div
-        className={`absolute top-2 right-2 z-100 rounded-full hover:text-orange cursor-pointer`}
+        className={`absolute top-2 right-2 z-20 rounded-full hover:text-orange cursor-pointer`}
         onClick={wishlistHandler}
       >
         <Heart
