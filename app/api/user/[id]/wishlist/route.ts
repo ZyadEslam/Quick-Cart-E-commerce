@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import dbConnect from "@/lib/mongoose";
 import User from "../../../../models/user";
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import Product from "../../../../models/product";
 
 interface Params {
   params: Promise<{ id: string }>;

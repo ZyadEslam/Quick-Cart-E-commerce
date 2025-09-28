@@ -1,4 +1,10 @@
 import mongoose from "mongoose";
+import "../app/models/user";
+import "../app/models/product";
+import "../app/models/order";
+import "../app/models/address";
+// import "../app/models/promoCode";
+
 const MONGODB_URI: string = process.env.MONGODB_URI as string; // Use environment variable for the connection string
 if (!MONGODB_URI) {
   throw new Error(
