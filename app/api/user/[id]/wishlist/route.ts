@@ -14,15 +14,12 @@ export async function GET(req: NextRequest, { params }: Params) {
 
     if (userFound) {
       const { wishlist } = userFound;
-      console.log("User Wishlist from DB: ", wishlist);
-      // Return consistent JSON structure
       return NextResponse.json({ wishlist: wishlist || [] }, { status: 200 });
     } else {
       return NextResponse.json({ message: "User Not Found", wishlist: [] }, { status: 404 });
     }
   } catch (err) {
     console.error("Wishlist GET error:", err);
-    // BUG FIX: You were missing 'return' here!
     return NextResponse.json({ 
       error: "Failed to fetch wishlist", 
       message: err instanceof Error ? err.message : String(err),
@@ -45,7 +42,6 @@ export async function POST(req: NextRequest, { params }: Params) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
     
-    // Replace the user's wishlist with the new wishlist from the request
     loggedUser.wishlist = wishlistToAdd;
     await loggedUser.save();
     

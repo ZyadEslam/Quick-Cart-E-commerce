@@ -64,8 +64,9 @@ export const api = {
           "Content-Type": "application/json",
         },
       });
-      console.log("getWishlist response:", response.json());
-      return response.json();
+      const res = await response.json();
+      console.log("Wishlist response:", res);
+      return res;
     } catch (err) {
       return NextResponse.json(err, { status: 500 });
     }
@@ -84,7 +85,7 @@ export const api = {
           wishlistToAdd,
         }),
       });
-      console.log("getCart response:", response.json());
+      console.log("Wishlist response:", response.json());
       return response.json();
     } catch (err) {
       return NextResponse.json(err, { status: 401 });
@@ -98,7 +99,9 @@ export const api = {
           "Content-Type": "application/json",
         },
       });
-      return response.json();
+      const res = await response.json();
+      console.log("Cart response:", res);
+      return res;
     } catch (err) {
       return NextResponse.json(err, { status: 500 });
     }
@@ -117,6 +120,8 @@ export const api = {
           cartToAdd,
         }),
       });
+      const res = await response.json();
+      console.log("mergeCart response:", res);
       return response.json();
     } catch (err) {
       return NextResponse.json(err, { status: 401 });
