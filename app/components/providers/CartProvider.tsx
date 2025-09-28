@@ -5,6 +5,7 @@ import { ProductCardProps } from "@/app/types/types";
 import { CartContext } from "../../context/cartCtx";
 import { useSession } from "next-auth/react"; // If using NextAuth
 import { api } from "@/app/utils/api";
+import { uniqueListItems } from "@/app/utils/utilFunctions";
 
 interface CartProviderProps {
   children: React.ReactNode;
@@ -131,6 +132,15 @@ const CartProvider = ({ children }: CartProviderProps) => {
     setCart([]);
   };
 
+  const removeUserCart = () => {
+    if (typeof window === "undefined") return;
+    if (session?.user?.id) {
+      const storageKey = getCartStorageKey(session.user.id);
+      localStorage.removeItem(storageKey);
+      setCart([]);
+    }
+  };
+
   // Get cart item count
   const getCartItemCount = () => {
     return cart.reduce((total, item) => total + (item.quantityInCart || 1), 0);
@@ -157,20 +167,21 @@ const CartProvider = ({ children }: CartProviderProps) => {
           console.log("Server Cart: ", serverCart);
           if (anonymousCart && !userCart) {
             if (serverCart.length > 0) {
-              setCart([...serverCart, ...JSON.parse(anonymousCart)]);
-              localStorage.setItem(
-                userKey,
-                JSON.stringify([...serverCart, ...JSON.parse(anonymousCart)])
-              );
+              const uniqueItems = uniqueListItems([
+                ...serverCart,
+                ...JSON.parse(anonymousCart),
+              ]);
+              setCart(uniqueItems);
+              localStorage.setItem(userKey, JSON.stringify(uniqueItems));
               localStorage.removeItem(anonymousKey);
             } else {
               setCart(JSON.parse(anonymousCart));
               localStorage.setItem(userKey, anonymousCart);
               localStorage.removeItem(anonymousKey);
             }
-          } else if (userCart) {
+          } else if (userCart && userCart.length > 0) {
             // Load user's existing cart
-            setCart(serverCart);
+            setCart(uniqueListItems([...serverCart, ...JSON.parse(userCart)]));
           }
         } catch (error) {
           console.error("Error syncing cart with server:", error);
@@ -195,6 +206,7 @@ const CartProvider = ({ children }: CartProviderProps) => {
       getCartItemCount,
       isInCart,
       manualSync,
+      removeUserCart,
     }),
     [cart, totalPrice]
   );

@@ -6,6 +6,7 @@ import { useSession } from "next-auth/react";
 import { WishlistContext } from "@/app/context/wishlistCtx";
 import { CartContextProps } from "@/app/context/cartCtx";
 import { api } from "@/app/utils/api";
+import { uniqueListItems } from "@/app/utils/utilFunctions";
 
 interface WishlistProviderProps {
   children: React.ReactNode;
@@ -90,6 +91,15 @@ const WishlistProvider = ({ children }: WishlistProviderProps) => {
     setWishlist([]);
   };
 
+  const removeUserWishlist = () => {
+    if (typeof window === "undefined") return;
+    if (session?.user?.id) {
+      const storageKey = getWishlistStorageKey(session.user.id);
+      localStorage.removeItem(storageKey);
+      setWishlist([]);
+    }
+  };
+
   // Move product from wishlist to cart (optional integration)
   const moveToCart = (productId: string, cartContext: CartContextProps) => {
     const product = wishlist.find((item) => item._id === productId);
@@ -97,6 +107,12 @@ const WishlistProvider = ({ children }: WishlistProviderProps) => {
       cartContext.addToCart(product);
       removeFromWishlist(productId);
     }
+  };
+  const getWishlistItemCount = () => {
+    return wishlist.reduce(
+      (total, item) => total + (item.quantityInCart || 1),
+      0
+    );
   };
 
   // Migrate anonymous wishlist to user wishlist when user logs in
@@ -120,17 +136,13 @@ const WishlistProvider = ({ children }: WishlistProviderProps) => {
           if (anonymousWishlist && !userWishlist) {
             // Migrate anonymous wishlist to user
             if (serverWishlist.length > 0) {
-              setWishlist([
+              const uniqueItems = uniqueListItems([
                 ...serverWishlist,
                 ...JSON.parse(anonymousWishlist),
               ]);
-              localStorage.setItem(
-                userKey,
-                JSON.stringify([
-                  ...serverWishlist,
-                  ...JSON.parse(anonymousWishlist),
-                ])
-              );
+              setWishlist(uniqueItems);
+
+              localStorage.setItem(userKey, JSON.stringify(uniqueItems));
               localStorage.removeItem(anonymousKey);
             } else {
               setWishlist(JSON.parse(anonymousWishlist));
@@ -139,7 +151,9 @@ const WishlistProvider = ({ children }: WishlistProviderProps) => {
             }
           } else if (userWishlist) {
             // Load user's existing wishlist
-            setWishlist(serverWishlist);
+            setWishlist(
+              uniqueListItems([...serverWishlist, ...JSON.parse(userWishlist)])
+            );
           }
         } catch (error) {
           console.error("Error migrating wishlist:", error);
@@ -147,7 +161,7 @@ const WishlistProvider = ({ children }: WishlistProviderProps) => {
       }
     };
     syncWishlistWithServer();
-  }, [session?.user?.id]);
+  }, []);
 
   const contextValue = useMemo(
     () => ({
@@ -158,6 +172,8 @@ const WishlistProvider = ({ children }: WishlistProviderProps) => {
       clearWishlist,
       moveToCart,
       manualSync,
+      removeUserWishlist,
+      getWishlistItemCount,
     }),
     [wishlist]
   );

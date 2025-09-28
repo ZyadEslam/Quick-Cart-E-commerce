@@ -1,4 +1,3 @@
-// app/error.tsx
 'use client';
 
 import { useEffect } from 'react';
@@ -12,14 +11,11 @@ export default function GlobalError({
   reset: () => void;
 }) {
   useEffect(() => {
-    // Log the error to an error reporting service
     console.error('Global error caught:', error);
   }, [error]);
 
   return (
-    <html>
-      <body className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center p-4">
-        <div className="max-w-lg w-full bg-white rounded-2xl shadow-xl p-8 text-center">
+        <div className="mx-auto mt-5 max-w-lg w-full bg-white rounded-2xl shadow-xl p-8 text-center">
           {/* Error Icon */}
           <div className="w-20 h-20 mx-auto mb-6 bg-red-100 rounded-full flex items-center justify-center">
             <svg 
@@ -46,7 +42,7 @@ export default function GlobalError({
             We apologize for the inconvenience. Please try the following steps:
           </p>
 
-          {/* Error Details (Visible only in development) */}
+          {/* (Visible only in development) */}
           {process.env.NODE_ENV === 'development' && (
             <details className="mb-6 p-4 bg-gray-50 rounded-lg text-left">
               <summary className="cursor-pointer font-medium text-gray-700">
@@ -102,7 +98,5 @@ export default function GlobalError({
             </div>
           </div>
         </div>
-      </body>
-    </html>
   );
 }

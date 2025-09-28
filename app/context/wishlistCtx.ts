@@ -12,6 +12,8 @@ interface WishlistContextProps {
   clearWishlist: () => void;
   moveToCart: (productId: string, cartContext: CartContextProps) => void; // Optional: integration with cart
   manualSync: () => Promise<void>;
+  removeUserWishlist: () => void;
+  getWishlistItemCount: () => number;
 }
 
 export const WishlistContext = createContext<WishlistContextProps | null>(null);

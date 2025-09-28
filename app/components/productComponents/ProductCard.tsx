@@ -1,22 +1,19 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { lazy, Suspense, useEffect, useState } from "react";
 import Image from "next/image";
 import { assets } from "@/public/assets/assets";
 import Link from "next/link";
-import Toast from "../UI/Toast";
 import { Heart } from "lucide-react";
-// import {
-//   addToWishlistStorage,
-//   isInWishlistStorage,
-//   removeFromWishlistStorage,
-// } from "../utils/utilFunctions";
-import { ProductCardProps } from "../types/types";
-import { useWishlist } from "../hooks/useWishlist";
+import { ProductCardProps } from "../../types/types";
+import { useWishlist } from "../../hooks/useWishlist";
+const Toast = lazy(() => import("../../UI/Toast"));
+const ProductImage = lazy(() => import("./ProductImage"));
 
 const ProductCard = ({ product }: { product: ProductCardProps }) => {
   const [inWishlist, setInWishlist] = useState(false);
   const [imageError, setImageError] = useState(false);
   const [imageSrc, setImageSrc] = useState("");
+  const [showToast, setShowToast] = useState({ show: false, message: "" });
   const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
 
   useEffect(() => {
@@ -25,9 +22,8 @@ const ProductCard = ({ product }: { product: ProductCardProps }) => {
     if (product._id) {
       setImageSrc(`/api/product/image/${product._id}?index=0`);
     }
-  }, [product._id]);
+  }, [product._id, isInWishlist]);
 
-  const [showToast, setShowToast] = useState({ show: false, message: "" });
   const handleShowToast = (showState: boolean, message: string) => {
     setShowToast(() => {
       return {
@@ -81,27 +77,27 @@ const ProductCard = ({ product }: { product: ProductCardProps }) => {
           message={showToast.message}
         ></Toast>
       )}
+      {/* Product Image */}
       <Link
         href={`/product/${product._id}`}
         className="md:w-1/6 sm:w-[48%] h-[320px]"
       >
         <div className="relative bg-secondaryLight rounded-lg mb-2 h-[180px] overflow-hidden">
           {imageSrc && !imageError ? (
-            <Image
-              src={imageSrc}
-              alt={`${product.name}`}
-              width={300}
-              height={300}
-              className="w-full h-full hover:scale-[1.05] transition-all duration-300"
-              onError={handleImageError}
-              unoptimized={true} // Important for custom image API
-            />
+            <Suspense>
+              <ProductImage
+                productName={product.name}
+                imageSrc={imageSrc}
+                handleImageError={handleImageError}
+              />
+            </Suspense>
           ) : (
             <div className="w-full h-full bg-gray-200 flex items-center justify-center rounded-lg">
               <span className="text-gray-400">No image</span>
             </div>
           )}
         </div>
+        {/* Product Details */}
         <p className="font-medium">{product.name}</p>
         <p className="text-[12px] font-light text-gray-400 truncate">
           {product.description}
@@ -133,6 +129,7 @@ const ProductCard = ({ product }: { product: ProductCardProps }) => {
             )}
           </span>
         </div>
+        {/* Price and Buy Now */}
         <div className="flex items-center justify-between mt-2">
           <span className="font-semibold ">${product.price}</span>
           <span className="text-[12px] border border-gray-200 rounded-full px-4 py-1 text-gray-500">

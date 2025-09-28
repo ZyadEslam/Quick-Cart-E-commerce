@@ -244,3 +244,6 @@ export const syncCartOnLogin = async (userId: string) => {
 };
 
 
+export const uniqueListItems = (list: ProductCardProps[]) => {
+  return Array.from(new Map(list.map((item) => [item._id, item])).values());
+};

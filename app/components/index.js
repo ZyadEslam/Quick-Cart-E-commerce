@@ -1,7 +1,9 @@
 import { lazy } from "react";
 // General Components ///////////
-export const ProductsGroup = lazy(() => import("./ProductsGroup"));
-export { default as ProductCard } from "./ProductCard";
+export const ProductsGroup = lazy(() =>
+  import("./productComponents/ProductsGroup")
+);
+export { default as ProductCard } from "./productComponents/ProductCard";
 export { default as Footer } from "./Footer";
 export { default as AuthButtons } from "./AuthButton";
 export { default as Provider } from "./providers/AuthProvider";

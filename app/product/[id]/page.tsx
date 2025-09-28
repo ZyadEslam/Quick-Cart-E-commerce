@@ -6,9 +6,11 @@ import { api } from "@/app/utils/api";
 import React, { Suspense, lazy, useEffect, useState } from "react";
 
 const ProductImagesSlider = lazy(
-  () => import("../../components/ProductImagesSlider")
+  () => import("../../components/productComponents/ProductImagesSlider")
 );
-const ProductDetails = lazy(() => import("../../components/ProductDetails"));
+const ProductDetails = lazy(
+  () => import("../../components/productComponents/ProductDetails")
+);
 
 type Props = {
   params: Promise<{ id: string }>;

@@ -33,7 +33,9 @@ export async function GET(
     }
 
     if (imageIndex >= product.imgSrc.length || imageIndex < 0) {
-      console.error(`Image index ${imageIndex} out of bounds for product ${id}`);
+      console.error(
+        `Image index ${imageIndex} out of bounds for product ${id}`
+      );
       return new NextResponse("Image index out of bounds", { status: 404 });
     }
 
@@ -48,10 +50,10 @@ export async function GET(
     // Convert base64 to buffer with better error handling
     let imageBuffer;
     let contentType = "image/jpeg"; // default
-    
+
     try {
       let base64String;
-      
+
       // Handle different possible formats of imageData
       if (typeof imageData === "string") {
         base64String = imageData;
@@ -95,31 +97,45 @@ export async function GET(
 
       // Validate buffer
       if (!imageBuffer || imageBuffer.length === 0) {
-        throw new Error("Empty image buffer");
+        return NextResponse.json(
+          { message: "Empty image buffer" },
+          { status: 500 }
+        );
       }
 
       // Basic image validation - check for common image headers
       const header = imageBuffer.subarray(0, 4);
-      if (header[0] === 0xFF && header[1] === 0xD8) {
+      if (header[0] === 0xff && header[1] === 0xd8) {
         contentType = "image/jpeg";
-      } else if (header[0] === 0x89 && header[1] === 0x50 && header[2] === 0x4E && header[3] === 0x47) {
+      } else if (
+        header[0] === 0x89 &&
+        header[1] === 0x50 &&
+        header[2] === 0x4e &&
+        header[3] === 0x47
+      ) {
         contentType = "image/png";
-      } else if (header[0] === 0x47 && header[1] === 0x49 && header[2] === 0x46) {
+      } else if (
+        header[0] === 0x47 &&
+        header[1] === 0x49 &&
+        header[2] === 0x46
+      ) {
         contentType = "image/gif";
       }
-
     } catch (error) {
       console.error(`Error processing image data for product ${id}:`, error);
       console.error(`Image data type:`, typeof imageData);
-      console.error(`Image data preview:`, 
-        typeof imageData === "string" 
-          ? imageData.substring(0, 100) + "..." 
+      console.error(
+        `Image data preview:`,
+        typeof imageData === "string"
+          ? imageData.substring(0, 100) + "..."
           : JSON.stringify(imageData).substring(0, 100) + "..."
       );
       return new NextResponse("Invalid image format", { status: 500 });
     }
 
-    console.log(`Serving image for product ${id}, size: ${imageBuffer.length} bytes, type: ${contentType}`);
+    console.log(
+      `Serving image for product ${id}, size: ${imageBuffer.length} bytes, type: ${contentType}`
+    );
 
     // Return the image buffer
     return new NextResponse(imageBuffer, {
@@ -131,7 +147,10 @@ export async function GET(
     });
   } catch (error) {
     console.error("Error serving image:", error);
-    console.error("Stack trace:", error instanceof Error ? error.stack : "No stack trace");
+    console.error(
+      "Stack trace:",
+      error instanceof Error ? error.stack : "No stack trace"
+    );
     return new NextResponse("Error serving image", { status: 500 });
   }
 }

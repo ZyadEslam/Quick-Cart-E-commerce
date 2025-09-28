@@ -1,40 +1,17 @@
 "use client";
-import React, { useState, useEffect } from "react";
-import RatingStars from "./RatingStars";
-import Toast from "../UI/Toast";
-import { ProductCardProps } from "../types/types";
-import {
-  addToCartStorage,
-  addToWishlistStorage,
-  removeFromCartStorage,
-  removeFromWishlistStorage,
-  // cartToStorageHandler,
-  // WishlistToStorageHandler,
-} from "../utils/utilFunctions";
+import React, {
+  useState,
+} from "react";
+import RatingStars from "../RatingStars";
+import Toast from "../../UI/Toast";
+import { ProductCardProps } from "../../types/types";
+
+import { useCart } from "../../hooks/useCart";
+import { useWishlist } from "../../hooks/useWishlist";
 
 const ProductDetails = ({ data }: { data: ProductCardProps }) => {
-  const [isInWishlist, setIsInWishlist] = useState(false);
-
-  const [isInCartList, setIsInCartlist] = useState(false);
-
-  useEffect(() => {
-    if (localStorage.getItem("wishlist")) {
-      const wishlist = JSON.parse(localStorage.getItem("wishlist") as string);
-      const foundItemInWishlist = wishlist.some(
-        (item: ProductCardProps) => item._id === data._id
-      );
-      setIsInWishlist(foundItemInWishlist);
-    }
-
-    if (localStorage.getItem("cart")) {
-      const cart = JSON.parse(localStorage.getItem("cart") as string);
-      const foundItemInCart = cart.some(
-        (item: ProductCardProps) => item._id === data._id
-      );
-      setIsInCartlist(foundItemInCart);
-    }
-  }, [data._id]);
-
+  const { addToCart, removeFromCart, isInCart } = useCart();
+  const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
   const [showToast, setShowToast] = useState({ show: false, message: "" });
   const handleShowToast = (showState: boolean, message: string) => {
     setShowToast(() => {
@@ -52,28 +29,22 @@ const ProductDetails = ({ data }: { data: ProductCardProps }) => {
 
   const listHandler = (handlerType: string) => {
     if (handlerType === "wishlist") {
-      if (!isInWishlist) {
+      if (!isInWishlist(data._id as string)) {
         handleShowToast(true, "Added To wishlist");
-        setIsInWishlist(true);
-        addToWishlistStorage(data);
+        addToWishlist(data);
       } else {
         handleShowToast(true, "Removed from wishlist");
-        setIsInWishlist(false);
-        removeFromWishlistStorage(data._id as string);
+        removeFromWishlist(data._id as string);
       }
-      // WishlistToStorageHandler(data);
     } else if (handlerType === "cart") {
-      if (!isInCartList) {
+      if (!isInCart(data._id as string)) {
         handleShowToast(true, "Added To Cart");
-        setIsInCartlist(true);
-        addToCartStorage(data, 1);
+        addToCart(data);
       } else {
         handleShowToast(true, "Removed From Cart");
-        setIsInCartlist(false);
-        removeFromCartStorage(data._id as string);
+        removeFromCart(data._id as string);
       }
-      // cartToStorageHandler(data);
-      // ADD The CartToStorageHandler //////////////////////////////////
+     
     }
   };
   return (
@@ -127,7 +98,7 @@ const ProductDetails = ({ data }: { data: ProductCardProps }) => {
           }}
           disabled={showToast.show}
         >
-          {isInCartList ? "Remove From Cart" : "Add to Cart"}
+          {isInCart(data._id as string) ? "Remove From Cart" : "Add to Cart"}
         </button>
         <button
           className="sm:w-auto sm:px-6 md:px-8 py-2 sm:py-3 bg-orange text-white hover:bg-orange/90 transition-colors text-sm sm:text-base"
@@ -136,7 +107,9 @@ const ProductDetails = ({ data }: { data: ProductCardProps }) => {
           }}
           disabled={showToast.show}
         >
-          {isInWishlist ? "Remove from wishlist" : "Add to wishlist"}
+          {isInWishlist(data._id as string)
+            ? "Remove from wishlist"
+            : "Add to wishlist"}
         </button>
       </div>
       {showToast.show && (

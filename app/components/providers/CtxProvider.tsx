@@ -1,7 +1,7 @@
 "use client";
-
 import CartProvider from "./CartProvider";
 import WishlistProvider from "./WishlistProvider";
+import ProductsProvider from "./ProductsProvider";
 
 interface AppProvidersProps {
   children: React.ReactNode;
@@ -9,10 +9,12 @@ interface AppProvidersProps {
 
 const CtxProviders = ({ children }: AppProvidersProps) => {
   return (
-    <CartProvider>
-      <WishlistProvider>{children}</WishlistProvider>
-    </CartProvider>
+    <ProductsProvider>
+      <CartProvider>
+        <WishlistProvider>{children}</WishlistProvider>
+      </CartProvider>
+    </ProductsProvider>
   );
 };
 
-export default CtxProviders
+export default CtxProviders;

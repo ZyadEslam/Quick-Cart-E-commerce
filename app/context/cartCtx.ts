@@ -13,7 +13,8 @@ export interface CartContextProps {
   clearCart: () => void;
   getCartItemCount: () => number;
   isInCart: (productId: string) => boolean;
-  manualSync: () => Promise<void>; 
+  manualSync: () => Promise<void>;
+  removeUserCart: () => void;
 }
 
 export const CartContext = createContext<CartContextProps | null>(null);

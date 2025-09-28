@@ -1,6 +1,9 @@
 import { lazy, Suspense } from "react";
-import LoadingSpinner from "../UI/LoadingSpinner";
-const ProductsGroup = lazy(() => import("../components/ProductsGroup"));
+// import LoadingSpinner from "../UI/LoadingSpinner";
+import { ProductSkeletonGroup } from "../components/productComponents/LoadingSkeleton";
+const ProductsGroup = lazy(
+  () => import("../components/productComponents/ProductsGroup")
+);
 const ShopPage = () => {
   return (
     <div className="md:px-[8.5%] sm:px-[5%]">
@@ -9,7 +12,7 @@ const ShopPage = () => {
           All products
         </h2>
       </div>
-      <Suspense fallback={<LoadingSpinner />}>
+      <Suspense fallback={<ProductSkeletonGroup />}>
         <ProductsGroup />
       </Suspense>
     </div>
