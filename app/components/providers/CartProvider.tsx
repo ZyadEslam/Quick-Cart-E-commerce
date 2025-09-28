@@ -192,7 +192,6 @@ const CartProvider = ({ children }: CartProviderProps) => {
     syncCartWithServer();
   }, []);
 
-  // Memoize the context value to prevent unnecessary re-renders
   const contextValue = useMemo(
     () => ({
       cart,

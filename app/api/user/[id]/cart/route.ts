@@ -15,14 +15,12 @@ export async function GET(req: NextRequest, { params }: Params) {
     if (userFound) {
       const { cart } = userFound;
       console.log("User Cart from DB: ", cart);
-      // Return consistent JSON structure
       return NextResponse.json({ cart: cart || [] }, { status: 200 });
     } else {
       return NextResponse.json({ message: "User Not Found", cart: [] }, { status: 404 });
     }
   } catch (err) {
     console.error("Cart GET error:", err);
-    // BUG FIX: You were missing 'return' here!
     return NextResponse.json({ 
       error: "Failed to fetch cart", 
       message: err instanceof Error ? err.message : String(err),

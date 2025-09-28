@@ -58,7 +58,13 @@ export const api = {
   },
   getWishlist: async (userId: string) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/user/${userId}/wishlist`);
+      const response = await fetch(`${API_BASE_URL}/user/${userId}/wishlist`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      console.log("getWishlist response:", response.json());
       return response.json();
     } catch (err) {
       return NextResponse.json(err, { status: 500 });
@@ -78,6 +84,7 @@ export const api = {
           wishlistToAdd,
         }),
       });
+      console.log("getCart response:", response.json());
       return response.json();
     } catch (err) {
       return NextResponse.json(err, { status: 401 });
@@ -85,7 +92,12 @@ export const api = {
   },
   getCart: async (userId: string) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/user/${userId}/cart`);
+      const response = await fetch(`${API_BASE_URL}/user/${userId}/cart`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
       return response.json();
     } catch (err) {
       return NextResponse.json(err, { status: 500 });
